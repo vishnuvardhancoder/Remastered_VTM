@@ -1,0 +1,89 @@
+.register-page {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a2a4a, #293b5f);
+    color: white;
+    overflow: hidden;
+  }
+  
+  .particle-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .register-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .register-title {
+    text-align: center;
+    color: white !important;
+    margin-bottom: 1.5rem;
+  }
+  
+  .register-form .ant-form-item-label > label {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  
+  .name-row {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .name-input {
+    flex: 1;
+  }
+  
+  .register-form input, 
+  .register-form .ant-input-password {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+  }
+  
+  .register-form input::placeholder, 
+  .register-form .ant-input-password::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+  
+  .register-button {
+    width: 100%;
+    background: linear-gradient(45deg, #00b4db, #0083b0) !important;
+    border: none !important;
+    height: 45px;
+    transition: all 0.3s ease;
+  }
+  
+  .register-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,180,219,0.4);
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .login-link a {
+    color: #00b4db;
+    transition: color 0.3s ease;
+  }
+  
+  .login-link a:hover {
+    color: #0083b0;
+  }
