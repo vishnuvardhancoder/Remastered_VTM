@@ -58,4 +58,13 @@ export class UserService {
     console.log("✅ Found User:", user ? user.userId : "User Not Found");
     return user;
 }
+
+
+// Add this method to fetch all users with their tasks
+async findAllUsersWithTasks(): Promise<User[]> {
+  return this.userRepository.find({
+    relations: ['tasks'], // This will fetch tasks for each user
+  });
+}
+
 }

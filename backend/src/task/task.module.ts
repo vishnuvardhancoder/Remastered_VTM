@@ -12,5 +12,6 @@ import { UserModule } from '../user/user.module';  // Import UserModule
   ],
   providers: [TaskService],
   controllers: [TaskController],
+  exports: [TaskService],  // Export TaskService so it can be used in other modules
 })
 export class TaskModule {}

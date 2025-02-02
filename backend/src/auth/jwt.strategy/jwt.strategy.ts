@@ -6,9 +6,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),  // Extract the JWT token from Authorization header
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET, // Ensure this is set in .env
+      secretOrKey: process.env.JWT_SECRET,  // Ensure this is set in your .env file
     });
   }
 
@@ -17,12 +17,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     console.log("🔍 JWT Payload:", payload); // Debugging
 
     return { 
-      userId: payload.userId,  // ✅ Extract userId directly (fixed)
+      userId: payload.userId,  // ✅ Extract userId directly from payload
       username: payload.username,
-      email: payload.email,
+      role: payload.role,  // Extract role for RBAC (role-based access control)
+      email: payload.email,  // Optional - include email if necessary
       firstname: payload.firstname,
       lastname: payload.lastname,
-      googleUserId: payload.googleUserId || null,
+      googleUserId: payload.googleUserId || null, // Google user ID if applicable
     };
   }
 }

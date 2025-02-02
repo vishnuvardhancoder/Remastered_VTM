@@ -19,10 +19,10 @@ export class User {
   @Column({ length: 72 }) // Specifically for bcrypt hashes
   password: string;
 
-  @Column({ default: 'user' }) // Default role is 'user'
-  role: string; // 'admin' or 'user'
+  @Column({ type: 'enum', enum: ['user', 'admin'], default: 'user' }) // Enforce role values
+  role: 'user' | 'admin';
 
-  @Column({ nullable: true }) // Make googleUserId nullable
+  @Column({ nullable: true, unique: true }) // Make googleId nullable and unique
   googleId: string | null;
 
   @Column({ unique: true })
@@ -30,6 +30,6 @@ export class User {
   @IsNotEmpty()
   email: string;
 
-  @OneToMany(() => Task, (task) => task.user)
+  @OneToMany(() => Task, (task) => task.user, { cascade: true }) // Ensure user-task relationship
   tasks: Task[];
 }

@@ -67,6 +67,7 @@ const Login = () => {
   .post('http://localhost:3000/auth/login', values)
   .then((response) => {
     const accessToken = response.data.access_token;
+    
 
     if (typeof accessToken === 'object' && accessToken.access_token) {
       localStorage.setItem('access_token', accessToken.access_token); // Extract correctly
@@ -187,6 +188,9 @@ const Login = () => {
 
         <div className="register-link">
           Don't have an account? <Link to="/register">Register here</Link>
+        </div>
+        <div className="register-link">
+          Are you Admin? <Link to="/admin/login">Click here</Link>
         </div>
       </div>
 

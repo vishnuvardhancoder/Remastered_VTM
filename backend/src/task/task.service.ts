@@ -119,4 +119,28 @@ export class TaskService {
 
     return task;
   }
+
+
+   // Method to assign a task to a user
+   async assignTaskToUser(userId: string, taskId: string): Promise<Task> {
+    const task = await this.taskRepository.findOne({
+      where: { taskId }, // Pass an object with a condition (where clause)
+    });
+
+    if (!task) {
+      throw new Error('Task not found');
+    }
+
+    task.userId = userId; // Assign task to user
+    return this.taskRepository.save(task); // Save the task
+  }
+
+   // ✅ Fetch all tasks with user details
+   async getAllTasksWithUsers() {
+    return await this.taskRepository.find({
+      relations: ['user'],  // Fetch the related user data with each task
+    });
+  }
+  
+  
 }

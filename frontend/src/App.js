@@ -7,7 +7,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import LandingPage from './pages/LandingPage';
 import Callback from './components/Callback';
-
+import AdminLogin from './admin/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
 
 const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
@@ -39,14 +40,14 @@ const Dashboard = ({ tasks, setTasks }) => (
 const AppHeader = () => {
   const navigate = useNavigate();
   const isAuthenticated = !!localStorage.getItem('access_token');
-  const username = localStorage.getItem('username') || 'Guest'; // Retrieve username from localStorage
+  const username = localStorage.getItem('username') || 'Guest'; // Retrieve username
+  const role = localStorage.getItem('role') || 'Guest'; // Retrieve role, default to 'Guest' if not available
 
   const handleLogout = () => {
     localStorage.clear();
     message.success('Logged out successfully!');
     navigate('/login');
   };
-
   return (
     <Header
       style={{
@@ -61,7 +62,6 @@ const AppHeader = () => {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
         <Avatar style={{ backgroundColor: '#ffffff', color: '#1e3c72', fontWeight: 'bold' }}>VTM</Avatar>
-        {/* <img src={logo} style={{"width":"100px"}}></img> */}
         <Title level={2} style={{ margin: 0, marginLeft: '5px', fontWeight: '600', fontSize: 'clamp(18px, 4vw, 24px)' }}>
           Task Manager
         </Title>
@@ -75,7 +75,7 @@ const AppHeader = () => {
               {username.charAt(0)?.toUpperCase()}
             </Avatar>
           </Tooltip>
-          <span style={{ fontSize: '16px', fontWeight: '500', marginLeft:'-8px' }}>{username}</span>
+          <span style={{ fontSize: '16px', fontWeight: '500', marginLeft:'-8px' }}>{role === 'admin' ? 'Admin' : username}</span>
 
           {/* Logout Button */}
           <Button type="primary" danger onClick={handleLogout}>
@@ -86,7 +86,6 @@ const AppHeader = () => {
     </Header>
   );
 };
-
 
 const AppFooter = () => (
   <Footer style={{ textAlign: 'center', padding: '10px', fontSize: 'clamp(12px, 3vw, 14px)' }}>
@@ -99,21 +98,23 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
+const AdminProtectedRoute = ({ children }) => {
+  const isAdminAuthenticated = !!localStorage.getItem('access_token'); // Add check for admin-specific token if needed
+  return isAdminAuthenticated ? children : <Navigate to="/admin/login" />;
+};
+
 const App = () => {
   const [tasks, setTasks] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
 
   // Determine whether to show header and footer
-  const shouldShowHeaderFooter = !['/landingpage', '/login', '/register'].includes(location.pathname);
+  const shouldShowHeaderFooter = !['/landingpage', '/login', '/register', '/admin/login'].includes(location.pathname);
 
   useEffect(() => {
-    // console.log('Current URL:', window.location.href); // Log the full URL
     const queryParams = new URLSearchParams(window.location.search);
     const token = queryParams.get('access_token');
     const userId = queryParams.get('userId');
-  
-    // console.log('OAuth Callback Params:', { token, userId }); // Log the extracted params
   
     if (token) {
       localStorage.setItem('access_token', token);
@@ -126,7 +127,6 @@ const App = () => {
       navigate('/dashboard', { replace: true });
     }
   }, [navigate]);
-  
   
   return (
     <>
@@ -144,6 +144,15 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/landingpage" element={<LandingPage />} />
         <Route path="/callback" element={<Callback />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminProtectedRoute>
+              <AdminDashboard />
+            </AdminProtectedRoute>
+          }
+        />
         <Route path="/" element={<Navigate to="/landingpage" />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

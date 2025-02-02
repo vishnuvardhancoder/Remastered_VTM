@@ -109,4 +109,13 @@ export class TaskController {
         const userId: string = req.user.userId;
         return this.taskService.softDelete(id, userId);
     }
+
+
+    // ✅ New endpoint to get all tasks with assigned user details
+  @UseGuards(JwtAuthGuard)
+  @Get('/all')
+  async getAllTasksWithUsers() {
+    return await this.taskService.getAllTasksWithUsers();
+  }
+
 }

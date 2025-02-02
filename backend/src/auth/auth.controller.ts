@@ -1,9 +1,15 @@
-import { Controller, Post, Body, UnauthorizedException, Get, Req, Res, UseGuards, NotFoundException, Param, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, Get, Req, Res, UseGuards, NotFoundException, Param, BadRequestException, Patch, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto/login.dto';
 import { RegisterDto } from './dto/login.dto/register.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '../user/user.service';
+import { AdminLoginDto } from './dto/AdminLogin.dto';
+import { Roles } from './role.decorator';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { RolesGuard } from './roles.guard';
+import { AssignTaskDto } from './AssignTask.dto';
+import { User } from 'src/user/entities/user/user';
 
 @Controller('auth')
 export class AuthController {
@@ -134,4 +140,56 @@ export class AuthController {
     }
     return { userId: user.userId.toString() };  // Ensure the userId is returned as a string
   }
+
+  // Admin login route
+  @Post('admin-login')
+  async adminLogin(@Body() adminLoginDto: AdminLoginDto) {
+    try {
+      const user = await this.authService.validateAdmin(
+        adminLoginDto.email,
+        adminLoginDto.password,
+      );
+  
+      if (!user) {
+        throw new Error('Invalid credentials or not an admin');
+      }
+  
+      return this.authService.loginAdmin(user);
+    } catch (error) {
+      // Send a detailed error message with HTTP status
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error: error.message || 'Invalid email or password',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
+  
+
+ // Admin dashboard route (only accessible by authenticated admins)
+ @UseGuards(JwtAuthGuard, RolesGuard) // Protect with JWT and Roles Guard
+ @Roles('admin') // Only admin role is allowed to access this route
+ @Get('admin-dashboard')
+ async getAdminDashboard() {
+   // Fetch and return the data for the admin dashboard
+   return { message: 'Welcome to the Admin Dashboard!' };
+ }
+
+ // Route to fetch all users and their tasks for the admin dashboard
+ @Get('admin/users')
+ async getAllUsers() {
+   return this.authService.findAllUsersWithTasks();
+ }
+
+ 
+  // Admin assigns a task to a user
+  @Post('assign-task')
+  async assignTaskToUser(@Body() assignTaskDto: AssignTaskDto) {
+    const { userId, taskId } = assignTaskDto; // Destructure the DTO to get userId and taskId
+    return this.authService.assignTaskToUser(userId, taskId); // Pass both arguments to the service method
+  }
+
+  
 }

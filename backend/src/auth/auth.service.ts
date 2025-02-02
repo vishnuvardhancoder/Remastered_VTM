@@ -1,14 +1,20 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, HttpException, HttpStatus } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/login.dto/register.dto';
+import { User } from 'src/user/entities/user/user';
+import { AssignTaskDto } from './AssignTask.dto';
+import { TaskService } from 'src/task/task.service';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private readonly taskService: TaskService, // Inject TaskService
   ) {}
 
   // Validate user credentials (username/password)
@@ -121,5 +127,54 @@ export class AuthService {
         throw new UnauthorizedException('Google login failed');
       });
   }
+
+
+  // Validate admin credentials
+  async validateAdmin(email: string, password: string): Promise<Omit<User, 'password'> | null> {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    
+    // Check if the provided email and password match the hardcoded admin credentials
+    if (email !== adminEmail || password !== adminPassword) {
+      throw new Error('Invalid email or password'); // Throw an error with a specific message
+    }
+    
+    // Hardcoded admin user object
+    const adminUser = {
+      userId: 'admin-uuid',
+      firstname: 'Admin',
+      lastname: 'User',
+      username: 'admin',
+      role: 'admin' as 'admin', // Explicitly set role as 'admin'
+      googleId: '', // Optional: if using Google Auth
+      email: adminEmail,
+      tasks: [],
+    };
   
+    return adminUser; // Return the admin user object without the password field
+  }
+  
+  
+  
+  // Generate JWT token for the authenticated admin
+  async loginAdmin(user: Omit<User, 'password'>) {
+    const payload = { userId: user.userId, username: user.username, role: user.role };
+
+    // Set an expiration time for the token (e.g., 1 hour)
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: '1h', // Set expiration time for the token
+    });
+
+    return { access_token: accessToken };
+  }
+
+  // Fetch all users with tasks for the admin
+  async findAllUsersWithTasks() {
+    return this.userService.findAllUsersWithTasks();
+  }
+
+  // Assign a task to a user
+  async assignTaskToUser(userId: string, taskId: string) {
+    return this.taskService.assignTaskToUser(userId, taskId);
+  }
 }
