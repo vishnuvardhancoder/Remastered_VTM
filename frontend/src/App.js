@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import LandingPage from './pages/LandingPage';
 import Callback from './components/Callback';
 
+
 const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
 
@@ -60,6 +61,7 @@ const AppHeader = () => {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
         <Avatar style={{ backgroundColor: '#ffffff', color: '#1e3c72', fontWeight: 'bold' }}>VTM</Avatar>
+        {/* <img src={logo} style={{"width":"100px"}}></img> */}
         <Title level={2} style={{ margin: 0, marginLeft: '5px', fontWeight: '600', fontSize: 'clamp(18px, 4vw, 24px)' }}>
           Task Manager
         </Title>

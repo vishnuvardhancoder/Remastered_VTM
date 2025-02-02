@@ -8,21 +8,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET,  // Replace with process.env.JWT_SECRET in production
-      passReqToCallback: true,     // Ensure the request object is passed to the validate method
+      secretOrKey: process.env.JWT_SECRET, // Ensure this is set in .env
     });
   }
 
-  // This method will be used to extract the user information from the JWT payload
-  async validate(req: any, payload: any) {
-    // Adding user info (userId, username, googleUserId) to the request object
-    // console.log('Decoded JWT Payload:', payload); // Check if `sub` (user ID) is available in the payload
-    req.user = { 
-      userId: payload.sub,  // The user ID in your system
-      username: payload.username, // The username in your system
-      googleUserId: payload.googleUserId, // The Google user ID from OAuth (added in JWT)
+  // Extract user details from the JWT payload
+  async validate(payload: any) {
+    console.log("🔍 JWT Payload:", payload); // Debugging
+
+    return { 
+      userId: payload.userId,  // ✅ Extract userId directly (fixed)
+      username: payload.username,
+      email: payload.email,
+      firstname: payload.firstname,
+      lastname: payload.lastname,
+      googleUserId: payload.googleUserId || null,
     };
-    
-    return req.user;  // Returning user data to be available in the request
   }
 }

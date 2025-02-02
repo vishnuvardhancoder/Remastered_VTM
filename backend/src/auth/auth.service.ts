@@ -32,41 +32,35 @@ export class AuthService {
   }
 
   // Generate JWT and log the user in
-  // Generate JWT and log the user in
-// Generate JWT and log the user in
-async login(user: any) {
-  if (!user) {
-    throw new UnauthorizedException('User not found');
-  }
-
-  const payload = { 
-    username: user.username, 
-    sub: user.id,
-    email: user.email,
-    firstname: user.firstname,
-    lastname: user.lastname,
-    googleUserId: user.googleUserId || null,  // Include Google User ID if exists
-  };
-
-  // Generate the JWT token
-  // const accessToken = this.jwtService.sign(payload);  // Ensure this is a string
-
-  return {
-    access_token: this.jwtService.sign(payload),  // Return as a plain string
-    userId: user.id,
-    username: user.username,
-    user: {
-      id: user.id,
-      username: user.username,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      googleUserId: user.googleUserId || null,
+  async login(user: any) {
+    if (!user) {
+        throw new UnauthorizedException('User not found');
     }
-  };
-  
-}
 
+    const payload = { 
+        userId: user.userId,  // 🔥 Ensure userId is explicitly set
+        username: user.username, 
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        googleUserId: user.googleUserId || null,  // Include Google User ID if exists
+    };
+
+    // Generate the JWT token
+    return {
+        access_token: this.jwtService.sign(payload),
+        userId: user.userId, // 🔥 Ensure userId is returned correctly
+        username: user.username,
+        user: {
+            userId: user.userId,  // 🔥 Use userId consistently
+            username: user.username,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            googleUserId: user.googleUserId || null,
+        }
+    };
+}
 
 
   // Register a new user (hash the password before storing)
@@ -97,8 +91,10 @@ async login(user: any) {
   // Handle Google login (check if the user exists, if not, create a new one)
   async googleLogin(profile: any) {
     const email = profile?.email;
-    const googleUserId = profile?.id;  // Extract Google User ID from the profile
+    const googleUserId = profile?.googleId;  // Ensure `googleId` is part of the profile
   
+    console.log('Google Profile:', profile); // Log the profile for debugging
+    
     if (!email || !googleUserId) {
       throw new UnauthorizedException('Google profile does not contain email or user ID');
     }
@@ -112,12 +108,12 @@ async login(user: any) {
             firstname: profile.firstName?.trim() || 'FirstName',
             lastname: profile.lastName?.trim() || 'LastName',
             email: email,
-            password: await bcrypt.hash('google-auth-' + Date.now(), 10),
+            password: null,  // Google users do not have a password
             googleUserId: googleUserId, // Store Google User ID in the database
           });
         }
   
-        // Return the login response with Google User ID included
+        // Return the login response with the internal user ID included
         return this.login(user); // Now this will return the token as a string
       })
       .catch((error) => {
@@ -125,4 +121,5 @@ async login(user: any) {
         throw new UnauthorizedException('Google login failed');
       });
   }
-};  
+  
+}

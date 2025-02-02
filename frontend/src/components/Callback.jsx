@@ -9,7 +9,7 @@ const Callback = () => {
     // Extract the query parameters from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get("access_token");
-    const userId = urlParams.get("user_id");  // Internal user ID
+    const userId = urlParams.get("user_id");  // Internal user ID (UUID)
     const googleUserId = urlParams.get("google_user_id");  // Google user ID
     const username = urlParams.get("username");  // Username
 
@@ -17,8 +17,9 @@ const Callback = () => {
       // Store the access token in localStorage
       localStorage.setItem("access_token", accessToken);
 
-      // Store user_id (internal) and google_user_id
-      localStorage.setItem("user_id", userId); // Store internal user ID
+      // Store user_id (internal) as UUID and google_user_id
+      localStorage.setItem("user_id", userId); // Store internal user ID (UUID)
+      
       if (googleUserId) {
         localStorage.setItem("google_user_id", googleUserId); // Store Google user ID
       }

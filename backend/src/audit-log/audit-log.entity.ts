@@ -2,8 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 
 @Entity('audit_logs')
 export class AuditLog {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid') // Use UUID instead of number
+  auditLogId: string; // Renamed from `id` to `auditLogId`
 
   @Column()
   endpoint: string; // API URL
@@ -16,8 +16,9 @@ export class AuditLog {
 
   @Column({ type: 'json', nullable: true })
   responseData: any; // Stores response data
-  @Column({ nullable: true })
-  userId?: number; // User ID if authenticated
+
+  @Column({ type: 'uuid', nullable: true }) // Ensure userId is a UUID
+  userId?: string; 
 
   @Column({ nullable: true })
   ipAddress?: string; // IP address of the user

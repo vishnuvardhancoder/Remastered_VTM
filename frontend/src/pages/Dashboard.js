@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Button, message, Typography, Row, Col, Card, Spin, Avatar, Tooltip } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { TaskContext } from './TaskContext'; // Context for managing tasks
+import { LogoutOutlined } from '@ant-design/icons'; // Import Ant Design logout icon
 
 const { Title, Text } = Typography;
 
@@ -30,7 +31,6 @@ const Dashboard = () => {
 
   // Fetch tasks from the backend API
   const fetchTasks = (token) => {
-    // Perform the fetch request to get tasks
     fetch('http://localhost:3000/api/tasks', {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -57,7 +57,6 @@ const Dashboard = () => {
         setLoading(false);
       });
   };
-  
 
   // Logout handler
   const logout = () => {
@@ -70,37 +69,71 @@ const Dashboard = () => {
 
   return (
     <div style={{ padding: '40px', backgroundColor: '#f4f6f9', minHeight: '100vh' }}>
+      <Row justify="space-between" align="middle" style={{ marginBottom: '20px' }}>
+        {/* Username and Avatar with Logout Button */}
+        <Col>
+          <Row align="middle">
+            <Avatar style={{ backgroundColor: '#87d068', marginRight: '10px' }}>
+              {username.charAt(0)?.toUpperCase()}
+            </Avatar>
+            <span style={{ fontSize: '16px', color: '#333', fontWeight: '500' }}>{username}</span>
+          </Row>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            danger
+            icon={<LogoutOutlined />}
+            onClick={logout}
+            style={{
+              borderRadius: '5px',
+              padding: '6px 16px',
+              fontSize: '14px',
+              fontWeight: '500',
+            }}
+          >
+            Logout
+          </Button>
+        </Col>
+      </Row>
+
       <Row justify="center" align="middle" style={{ minHeight: '80vh' }}>
-        <Col span={24} sm={16} md={12} lg={8}>
+        <Col span={24} sm={16} md={12} lg={10} xl={8}>
           <Card
             bordered={false}
             style={{
               background: '#fff',
               padding: '40px',
               borderRadius: '10px',
-              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+              boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
+              textAlign: 'center',
+              marginBottom: '20px', // Added spacing between card sections
             }}
           >
-            <Title level={2} style={{ textAlign: 'center', color: '#333' }}>
+            <Title level={2} style={{ color: '#333', fontWeight: 600 }}>
               Welcome to the Dashboard!
             </Title>
 
             {/* Profile Section */}
             <div className="profile-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-              <div className="profile-avatar" style={{ 
-                width: '40px', height: '40px', 
-                borderRadius: '50%', 
-                backgroundColor: '#007bff', 
-                color: 'white', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                fontSize: '18px', 
-                marginRight: '10px' 
-              }}>
+              <div
+                className="profile-avatar"
+                style={{
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '50%',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '20px',
+                  marginRight: '10px',
+                }}
+              >
                 <span>{username ? username.charAt(0).toUpperCase() : ''}</span>
               </div>
-              <span style={{ fontSize: '16px', fontWeight: '500' }}>{username}</span>
+              <span style={{ fontSize: '18px', fontWeight: '500', color: '#333' }}>{username}</span>
             </div>
 
             <Text style={{ display: 'block', textAlign: 'center', color: '#888', marginBottom: '20px' }}>
@@ -112,33 +145,35 @@ const Dashboard = () => {
                 'You have no tasks yet. Start adding some!'
               )}
             </Text>
-            <div style={{ textAlign: 'center', marginTop: '20px' }}>
-              <Button
-                type="primary"
-                size="large"
-                danger
-                onClick={logout}
-                style={{
-                  borderRadius: '5px',
-                  padding: '10px 20px',
-                  fontSize: '16px',
-                }}
-              >
-                Logout
-              </Button>
-            </div>
+          </Card>
+
+          {/* Tasks Table Section */}
+          <Card
+            bordered={false}
+            style={{
+              background: '#fff',
+              padding: '20px',
+              borderRadius: '10px',
+              boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <Title level={4} style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>
+              Your Tasks
+            </Title>
+
+            {/* Tasks Table Here */}
+            {loading ? (
+              <Spin tip="Loading tasks..." />
+            ) : (
+              <div>
+                {/* Display tasks here */}
+                <Text style={{ textAlign: 'center', display: 'block', color: '#666' }}>
+                  {tasks.length > 0 ? 'Here are your tasks' : 'No tasks to show yet.'}
+                </Text>
+              </div>
+            )}
           </Card>
         </Col>
-      </Row>
-
-      {/* Top Right Section (Username & Avatar) */}
-      <Row style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center' }}>
-        <Tooltip title={username}>
-          <Avatar style={{ backgroundColor: '#87d068', marginRight: '10px' }}>
-            {username.charAt(0)?.toUpperCase()}
-          </Avatar>
-        </Tooltip>
-        <span style={{ fontSize: '16px', color: '#333' }}>{username}</span>
       </Row>
     </div>
   );

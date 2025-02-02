@@ -10,7 +10,7 @@ const TaskForm = ({ onTaskCreated }) => {
   const handleSubmit = (values) => {
     const { title, description } = values;
     const token = localStorage.getItem('access_token');
-    const userId = localStorage.getItem('user_id');  // Get userId from localStorage
+    const userId = localStorage.getItem('user_id');  // Get userId (UUID) from localStorage
   
     if (!token) {
       setAlertMessage('Error: Please log in.');
@@ -23,16 +23,15 @@ const TaskForm = ({ onTaskCreated }) => {
       setAlertMessage('Error: User not found.');
       setAlertType('error');
       setTimeout(() => setAlertMessage(null), 2000);
-      // console.log('User ID is not in localStorage');
       return;
     }
   
-    // Send task data along with userId
+    // Send task data along with userId (UUID)
     axios.post('http://localhost:3000/task', 
       { 
         title, 
         description, 
-        userId  // Pass userId along with title and description
+        userId  // Pass userId (UUID) along with title and description
       },
       {
         headers: {
@@ -53,7 +52,6 @@ const TaskForm = ({ onTaskCreated }) => {
         setTimeout(() => setAlertMessage(null), 2000);
       });
   }
-  
   
 
   return (
