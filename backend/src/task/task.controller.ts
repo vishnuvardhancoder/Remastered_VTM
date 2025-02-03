@@ -17,7 +17,9 @@ export class TaskController {
         private readonly userService: UserService,
     ) {}
     // Inject the UserService here
-
+  
+ 
+    
     @UseGuards(JwtAuthGuard)
     @Post()
     @ApiOperation({ summary: 'Create a new task' })
@@ -70,8 +72,7 @@ export class TaskController {
     
     
       
-      
-  
+    
     
     @UseGuards(JwtAuthGuard)
     @Get()

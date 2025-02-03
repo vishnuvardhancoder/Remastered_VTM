@@ -4,6 +4,7 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { User } from 'src/user/entities/user/user';
 import { UserService } from 'src/user/user.service';
+import { MailService } from 'src/mailer/mailer.service';
 
 @Injectable()
 export class TaskService {
@@ -11,7 +12,15 @@ export class TaskService {
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
     private userService: UserService, // UserService to manage user data
+    private readonly mailService: MailService, // Fix: Removed extra closing parenthesis
   ) {}
+
+  // async assignTaskToUser(userEmail: string, taskDetails: string) {
+  //   // Call the email service to send a notification
+  //   await this.mailService.sendTaskAssignedEmail(userEmail, taskDetails);
+  // }
+
+
 
   // ✅ Fetch all tasks (Admin feature)
   async findAll(): Promise<Task[]> {
@@ -131,33 +140,45 @@ export class TaskService {
   }
 
   // ✅ Assign a task to a user (Admin feature)
-  async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise<Task> {
-    console.log(`📌 Assigning Task ${taskId} to User ${userId}`);
+async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise<Task> {
+  console.log(`📌 Assigning Task ${taskId} to User ${userId}`);
 
-    // Check if task exists
-    const task = await this.taskRepository.findOne({ where: { taskId } });
-    if (!task) {
-      throw new NotFoundException('Task not found');
-    }
-
-    // Check if user exists
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    // Assign task to user
-    task.userId = userId;
-
-    // Set deadline only if provided (admin-assigned task)
-    if (deadline) {
-      task.deadline = deadline;
-    }
-
-    console.log(`✅ Task assigned successfully with deadline: ${deadline}`);
-
-    return this.taskRepository.save(task);
+  // Check if task exists
+  const task = await this.taskRepository.findOne({ where: { taskId } });
+  if (!task) {
+    throw new NotFoundException('Task not found');
   }
+
+  // Check if user exists
+  const user = await this.userService.findById(userId);
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+
+  // Assign task to user
+  task.userId = userId;
+
+  // Set deadline only if provided (admin-assigned task)
+  if (deadline) {
+    task.deadline = deadline;
+  }
+
+  console.log(`✅ Task assigned successfully with deadline: ${deadline}`);
+
+  // Save the updated task
+  const updatedTask = await this.taskRepository.save(task);
+
+  // ✅ Send email notification to the assigned user
+  try {
+    await this.mailService.sendTaskAssignedEmail(user.email, `Task: ${task.taskId} has been assigned to you.`);
+    console.log(`📧 Email sent to ${user.email} about the assigned task.`);
+  } catch (error) {
+    console.error('❌ Failed to send email:', error);
+  }
+
+  return updatedTask;
+}
+
 
   // ✅ Fetch all tasks with user details (Admin feature)
   async getAllTasksWithUsers(): Promise<Task[]> {
