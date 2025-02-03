@@ -450,159 +450,163 @@
 
 
     return (
+      <div>
       <Card 
-    title="Task List" 
-    bordered={true} 
-    style={{ 
-      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
-      borderRadius: '8px',
-      padding: '16px'
-    }}
-  >
-    <Row gutter={[16, 16]} justify="space-between" align="middle" style={{ marginBottom: '20px' }}>
-      <Col xs={24} sm={24} md={12}>
-        <Input.Search 
-          placeholder="Search tasks..." 
-          value={searchQuery} 
-          onChange={(e) => handleSearch(e.target.value)} 
-          enterButton 
-          allowClear 
-          style={{ borderRadius: '6px', height: '40px' }}
-        />
-      </Col>
-
-      <Col
-        xs={24}
-        sm={24}
-        md={12}
-        style={{
-          textAlign: 'right',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '10px',
-          justifyContent: 'flex-end',
-        }}
-      >
-        <Button
-          type="primary"
-          onClick={markMultipleCompleted}
-          disabled={!selectedRowKeys.length}
+      title="Task List" 
+      bordered={true} 
+      style={{ 
+        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
+        borderRadius: '8px',
+        padding: '16px'
+      }}
+    >
+      <Row gutter={[16, 16]} justify="space-between" align="middle" style={{ marginBottom: '20px' }}>
+        <Col xs={24} sm={24} md={12}>
+          <Input.Search 
+            placeholder="Search tasks..." 
+            value={searchQuery} 
+            onChange={(e) => handleSearch(e.target.value)} 
+            enterButton 
+            allowClear 
+            style={{ borderRadius: '6px', height: '40px' }}
+          />
+        </Col>
+    
+        <Col
+          xs={24}
+          sm={24}
+          md={12}
           style={{
-            minWidth: '180px',
-            height: '40px',
-            fontWeight: '500',
-            borderRadius: '6px'
+            textAlign: 'right',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '10px',
+            justifyContent: 'flex-end',
           }}
         >
-          Mark Selected as Complete
-        </Button>
-
-        {location.pathname === '/dashboard' && (
           <Button
-            danger
-            onClick={deleteMultipleTasks}
+            type="primary"
+            onClick={markMultipleCompleted}
             disabled={!selectedRowKeys.length}
-            icon={<DeleteOutlined />}
             style={{
-              minWidth: '160px',
+              minWidth: '180px',
               height: '40px',
               fontWeight: '500',
               borderRadius: '6px'
             }}
           >
-            Delete Selected
+            Mark Selected as Complete
           </Button>
-        )}
-      </Col>
-    </Row>
-
-    <div style={{ overflowX: 'auto', width: '100%' }}>
+    
+          {location.pathname === '/dashboard' && (
+            <Button
+              danger
+              onClick={deleteMultipleTasks}
+              disabled={!selectedRowKeys.length}
+              icon={<DeleteOutlined />}
+              style={{
+                minWidth: '160px',
+                height: '40px',
+                fontWeight: '500',
+                borderRadius: '6px'
+              }}
+            >
+              Delete Selected
+            </Button>
+          )}
+        </Col>
+      </Row>
+    
+      {/* Regular Task Table */}
+      <div style={{ overflowX: 'auto', width: '100%', marginBottom: '30px' }}>
       <Table 
-        dataSource={filteredTasks.length || searchQuery ? filteredTasks : tasks} 
-        columns={[
-          {
-            title: 'Title',
-            dataIndex: 'title',
-            key: 'title',
-            ellipsis: true,
-          },
-          {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
-            ellipsis: true,
-          },
-          {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => {
-              if (status === 'completed') return <Tag color="green">Completed</Tag>;
-              if (status === 'inProgress') return <Tag color="blue">In Progress</Tag>;
-              return <Tag color="red">Not Completed</Tag>;
-            }
-          },
-          {
-            title: 'Actions',
-            key: 'actions',
-            render: (_, record) => (
-              <Popover
-    content={
-      <Menu>
-        <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-          Edit
-        </Menu.Item>
-        <Menu.Item
-          key="complete"
-          icon={<CheckOutlined />}
-          onClick={() => markCompleted(record.taskId)}
-          disabled={record.status === 'completed'}
-        >
-          Mark as Complete
-        </Menu.Item>
-        <Menu.Item
-          key="inProgress"
-          icon={<PlayCircleOutlined />}
-          onClick={() => markInProgress(record.taskId)}
-          disabled={record.status === 'inProgress' || record.status === 'completed'}
-        >
-          Mark as In Progress
-        </Menu.Item>
-        {location.pathname === '/dashboard' && (
-          <Menu.Item
-            key="delete"
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record.taskId)}
-          >
-            Delete
-          </Menu.Item>
-        )}
-      </Menu>
-    }
-    trigger="click"
-    placement="bottomRight"
-  >
-    <Button type="link" icon={<EllipsisOutlined />} />
-  </Popover>
-            )
+ dataSource={tasks.filter(task => task.deadline === null)}  // Filter tasks with no deadline
+  columns={[
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+      ellipsis: true,
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      ellipsis: true,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => {
+        if (status === 'completed') return <Tag color="green">Completed</Tag>;
+        if (status === 'inProgress') return <Tag color="blue">In Progress</Tag>;
+        return <Tag color="red">Not Completed</Tag>;
+      }
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Popover
+          content={
+            <Menu>
+              <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
+                Edit
+              </Menu.Item>
+              <Menu.Item
+                key="complete"
+                icon={<CheckOutlined />}
+                onClick={() => markCompleted(record.taskId)}
+                disabled={record.status === 'completed'}
+              >
+                Mark as Complete
+              </Menu.Item>
+              <Menu.Item
+                key="inProgress"
+                icon={<PlayCircleOutlined />}
+                onClick={() => markInProgress(record.taskId)}
+                disabled={record.status === 'inProgress' || record.status === 'completed'}
+              >
+                Mark as In Progress
+              </Menu.Item>
+              {location.pathname === '/dashboard' && (
+                <Menu.Item
+                  key="delete"
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleDelete(record.taskId)}
+                >
+                  Delete
+                </Menu.Item>
+              )}
+            </Menu>
           }
-        ]}
-        rowKey="taskId"
-        rowSelection={rowSelection}
-        pagination={{
-          responsive: true,
-          position: ['bottomCenter'],
-          size: 'small',
-        }}
-        scroll={{ x: 'max-content' }}
-        size="middle"
-        style={{
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-        }}
-      />
-    </div>
+          trigger="click"
+          placement="bottomRight"
+        >
+          <Button type="link" icon={<EllipsisOutlined />} />
+        </Popover>
+      )
+    }
+  ]}
+  rowKey="taskId"
+  rowSelection={rowSelection}
+  pagination={{
+    responsive: true,
+    position: ['bottomCenter'],
+    size: 'small',
+  }}
+  scroll={{ x: 'max-content' }}
+  size="middle"
+  style={{
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+  }}
+/>
 
+      </div>
+
+      
     
   <Modal 
           title="Edit Task" 
@@ -643,6 +647,90 @@
           </Form>
         </Modal>
   </Card>
+
+  {/* Admin Assigned Task Table */}
+  <Card title="Tasks Assigned by Admin" bordered={true}style={{ 
+        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
+        borderRadius: '8px',
+        padding: '16px',
+        marginTop:'25px'
+      }}>
+  <Table 
+  dataSource={tasks.filter(task => task.deadline !== null)}  // Filter tasks with a deadline
+  columns={[
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+      ellipsis: true,
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      ellipsis: true,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => {
+        if (status === 'completed') return <Tag color="green">Completed</Tag>;
+        if (status === 'inProgress') return <Tag color="blue">In Progress</Tag>;
+        return <Tag color="red">Not Completed</Tag>;
+      }
+    },
+    {
+      title: 'Deadline',
+      dataIndex: 'deadline',
+      key: 'deadline',
+      render: (deadline) => deadline ? new Date(deadline).toLocaleDateString() : 'No Deadline'
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Popover
+          content={
+            <Menu>
+              <Menu.Item key="complete" icon={<CheckOutlined />} onClick={() => markCompleted(record.taskId)}>
+                Mark as Complete
+              </Menu.Item>
+              <Menu.Item
+                key="inProgress"
+                icon={<PlayCircleOutlined />}
+                onClick={() => markInProgress(record.taskId)}
+                disabled={record.status === 'inProgress' || record.status === 'completed'}
+              >
+                Mark as In Progress
+              </Menu.Item>
+            </Menu>
+          }
+          trigger="click"
+          placement="bottomRight"
+        >
+          <Button type="link" icon={<EllipsisOutlined />} />
+        </Popover>
+      )
+    }
+  ]}
+  rowKey="taskId"
+  pagination={{
+    responsive: true,
+    position: ['bottomCenter'],
+    size: 'small',
+  }}
+  scroll={{ x: 'max-content' }}
+  size="middle"
+  style={{
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+  }}
+/>
+  </Card>
+
+
+  </div>
 
     );
   };

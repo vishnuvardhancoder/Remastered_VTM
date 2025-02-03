@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, message, Row, Col } from 'antd';
+import { Form, Input, Button, Row, Col } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
@@ -38,7 +38,6 @@ const AdminLogin = () => {
     }
   };
 
-
   return (
     <div style={styles.container}>
       <Row justify="center" align="middle" style={styles.row}>
@@ -49,12 +48,12 @@ const AdminLogin = () => {
               onFinish={handleLogin}
               layout="vertical"
               initialValues={{ username: '', password: '' }} // Ensure the form is empty on load
-              key="adminLoginForm" // Force re-render to clear form data
             >
               <Form.Item
                 label="Email"
                 name="username"
-                rules={[{ required: true, message: 'Please enter your email!' }]}>
+                rules={[{ required: true, message: 'Please enter your email!' }]}
+              >
                 <Input
                   size="large"
                   placeholder="Enter your email"
@@ -66,7 +65,8 @@ const AdminLogin = () => {
               <Form.Item
                 label="Password"
                 name="password"
-                rules={[{ required: true, message: 'Please enter your password!' }]}>
+                rules={[{ required: true, message: 'Please enter your password!' }]}
+              >
                 <Input.Password
                   size="large"
                   placeholder="Enter your password"
@@ -81,7 +81,8 @@ const AdminLogin = () => {
                   htmlType="submit"
                   block
                   loading={loading}
-                  style={styles.submitButton}>
+                  style={styles.submitButton}
+                >
                   Log In
                 </Button>
               </Form.Item>
@@ -97,8 +98,9 @@ const AdminLogin = () => {
 // Styles for a better UI
 const styles = {
   container: {
+    position: 'relative',
     minHeight: '100vh',
-    backgroundColor: '#f0f2f5',
+    background: 'linear-gradient(135deg, #6f42c1, #4e73df)', // Cool gradient background
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -108,31 +110,34 @@ const styles = {
     padding: '0 20px',
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     padding: '40px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+    borderRadius: '12px',
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
     textAlign: 'center',
     minWidth: '300px',
+    maxWidth: '500px',
+    border: '2px solid #4e73df', // Vibrant border color
   },
   heading: {
-    fontSize: '26px',
+    fontSize: '28px',
     fontWeight: 'bold',
     marginBottom: '20px',
-    color: '#333',
+    color: '#4e73df', // Cool blue heading color
   },
   input: {
     width: '100%',
-    borderRadius: '5px',
+    borderRadius: '8px',
     height: '45px',
     marginBottom: '15px',
+    fontSize: '16px',
   },
   submitButton: {
-    backgroundColor: '#1890ff',
-    borderColor: '#1890ff',
+    backgroundColor: '#4e73df',
+    borderColor: '#4e73df',
     fontSize: '16px',
     height: '45px',
-    borderRadius: '5px',
+    borderRadius: '8px',
     fontWeight: '600',
     marginTop: '10px',
   },

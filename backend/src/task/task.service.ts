@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { User } from 'src/user/entities/user/user';
 import { UserService } from 'src/user/user.service';
@@ -13,134 +13,178 @@ export class TaskService {
     private userService: UserService, // UserService to manage user data
   ) {}
 
-  // ✅ To get all tasks (User-specific)
+  // ✅ Fetch all tasks (Admin feature)
   async findAll(): Promise<Task[]> {
-    return this.taskRepository.find();  // Retrieve all tasks
+    return this.taskRepository.find();
   }
 
-  // ✅ To create a new task (User-specific)
-  async createTask(title: string, description: string, userId: string): Promise<Task> {
-    console.log("🚀 Received userId for Task:", userId); // Debug log
-
-    const user = await this.userService.findById(userId);
-    if (!user) {
-        throw new NotFoundException('User not found');
-    }
-
-    console.log("✅ Found User ID:", user.userId); // Debug log
-
+  async createTask(
+    title: string, 
+    description: string, 
+    assignedUserId: string,  // Assign task to the user based on this ID
+    deadline: Date
+  ): Promise<Task> {
+    console.log("🚀 Assigned User ID:", assignedUserId);
+    
+    // Create the task for the assigned user
     const task = new Task();
     task.title = title;
     task.description = description;
-    task.status = 'notCompleted';
-    task.completed = false;
-    task.userId = user.userId; // Ensure correct user ID
-
-    console.log("📝 Saving Task with userId:", task.userId); // Debug log
-
+    task.deadline = deadline;
+    task.status = 'Not Started';  // Default status
+    task.completed = false;      // Default completed status
+    task.userId = assignedUserId;  // Task is assigned to the specific user
+    
+    console.log("📝 Saving Task with assignedUserId:", task.userId);
+    
+    // Save the task and return the saved task
     return this.taskRepository.save(task);
-}
+  }
+  
+  
 
+  
+  
 
-
-  // ✅ To get all tasks (User-specific)
+  // ✅ Fetch tasks for a specific user (User-specific)
   async getAllTasks(userId: string): Promise<Task[]> {
-    console.log("Fetching tasks for userId:", userId); // Debug log
+    console.log("Fetching tasks for userId:", userId);
 
     const tasks = await this.taskRepository.find({
-        where: { userId, deleted: false }
+      where: { userId, deleted: false }
     });
 
-    console.log("Tasks found:", tasks.length); // Debug log
+    console.log("Tasks found:", tasks.length);
 
     return tasks;
-}
+  }
 
-  // ✅ To get a task by ID (User-specific)
+  // ✅ Get task by ID (User-specific)
   async getTaskById(taskId: string, userId: string): Promise<Task | null> {
-    const task = await this.taskRepository.findOne({ where: { taskId, userId, deleted: false } });
+    const task = await this.taskRepository.findOne({
+      where: { taskId, userId, deleted: false }
+    });
+
     if (!task) {
       throw new NotFoundException('Task not found');
     }
+
     return task;
   }
 
-  // ✅ To update a task (User-specific)
+  // ✅ Update task details (User-specific)
   async updateTask(
     taskId: string,
     title: string,
     description: string,
     completed: boolean,
-    status: string,  
-    userId: string,  
+    status: string,
+    userId: string,
   ): Promise<Task | null> {
     const task = await this.getTaskById(taskId, userId);
-    if (task) {
-      task.title = title;
-      task.description = description;
-      task.completed = completed;
-      task.status = status;  
-
-      return this.taskRepository.save(task);
+    if (!task) {
+      throw new NotFoundException('Task not found');
     }
-    throw new NotFoundException('Task not found');
+
+    task.title = title;
+    task.description = description;
+    task.completed = completed;
+    task.status = status;
+
+    return this.taskRepository.save(task);
   }
 
-  // ✅ To mark a task as completed (User-specific)
+  // ✅ Mark a task as completed (User-specific)
   async completeTask(taskId: string, userId: string): Promise<Task | null> {
     const task = await this.getTaskById(taskId, userId);
-    if (task) {
-      task.status = 'Completed';
-      task.completed = true;
-      return this.taskRepository.save(task);
+    if (!task) {
+      throw new NotFoundException('Task not found');
     }
-    throw new NotFoundException('Task not found');
+
+    task.status = 'Completed';
+    task.completed = true;
+
+    return this.taskRepository.save(task);
   }
 
-  // ✅ To mark a task as in progress (User-specific)
+  // ✅ Mark a task as in progress (User-specific)
   async markInProgress(taskId: string, userId: string): Promise<Task | null> {
     const task = await this.getTaskById(taskId, userId);
-    if (task) {
-      task.status = 'In Progress';  
-      return this.taskRepository.save(task);
+    if (!task) {
+      throw new NotFoundException('Task not found');
     }
-    throw new NotFoundException('Task not found');
+
+    task.status = 'In Progress';
+
+    return this.taskRepository.save(task);
   }
 
-  // ✅ Soft delete a task by setting the 'deleted' flag to true (User-specific)
+  // ✅ Soft delete a task by setting 'deleted' flag (User-specific)
   async softDelete(taskId: string, userId: string): Promise<Task | null> {
-    const task = await this.taskRepository.findOne({ where: { taskId, userId, deleted: false } });
+    const task = await this.getTaskById(taskId, userId);
     if (!task) {
       throw new NotFoundException('Task not found');
     }
 
     task.deleted = true;
-    await this.taskRepository.save(task);
-
-    return task;
+    return this.taskRepository.save(task);
   }
 
+  // ✅ Assign a task to a user (Admin feature)
+  async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise<Task> {
+    console.log(`📌 Assigning Task ${taskId} to User ${userId}`);
 
-   // Method to assign a task to a user
-   async assignTaskToUser(userId: string, taskId: string): Promise<Task> {
-    const task = await this.taskRepository.findOne({
-      where: { taskId }, // Pass an object with a condition (where clause)
-    });
-
+    // Check if task exists
+    const task = await this.taskRepository.findOne({ where: { taskId } });
     if (!task) {
-      throw new Error('Task not found');
+      throw new NotFoundException('Task not found');
     }
 
-    task.userId = userId; // Assign task to user
-    return this.taskRepository.save(task); // Save the task
+    // Check if user exists
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Assign task to user
+    task.userId = userId;
+
+    // Set deadline only if provided (admin-assigned task)
+    if (deadline) {
+      task.deadline = deadline;
+    }
+
+    console.log(`✅ Task assigned successfully with deadline: ${deadline}`);
+
+    return this.taskRepository.save(task);
   }
 
-   // ✅ Fetch all tasks with user details
-   async getAllTasksWithUsers() {
-    return await this.taskRepository.find({
-      relations: ['user'],  // Fetch the related user data with each task
+  // ✅ Fetch all tasks with user details (Admin feature)
+  async getAllTasksWithUsers(): Promise<Task[]> {
+    return this.taskRepository.find({
+      relations: ['user'], // Fetch the related user data with each task
     });
   }
+
+  async getRegularTasks(): Promise<Task[]> {
+    const tasks = await this.taskRepository.find({
+      where: {
+        deadline: IsNull(),  // Tasks without a deadline (null)
+      },
+    });
+    console.log('Regular Tasks:', tasks);  // Log the tasks
+    return tasks;
+  }
   
+  async getAdminAssignedTasks(): Promise<Task[]> {
+    const tasks = await this.taskRepository.find({
+      where: {
+        deadline: Not(IsNull()),  // Tasks with a deadline (non-null)
+      },
+    });
+    console.log('Admin Assigned Tasks:', tasks);  // Log the tasks
+    return tasks;
+  }
   
+
 }

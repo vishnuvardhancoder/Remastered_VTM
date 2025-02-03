@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, message, Tag, Input, Col, DatePicker } from 'antd';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -14,12 +16,17 @@ const AdminDashboard = () => {
   const [taskSearchQuery, setTaskSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertType, setAlertType] = useState('');
 
   useEffect(() => {
     fetchUsersWithTasks();
     fetchTasks();
   }, []);
 
+  
+  
   // Fetch all users with their tasks
   const fetchUsersWithTasks = async () => {
     try {
@@ -60,37 +67,64 @@ const AdminDashboard = () => {
     }
   };
 
-  // Handle assigning a new task to a user
-  const handleAssignTask = async () => {
-    if (!selectedUser || !newTaskTitle || !newTaskDescription || !newTaskDeadline) {
-      message.warning('Please fill in all fields');
-      return;
-    }
+   // Handle task assignment
+   
 
-    try {
-      const taskData = {
-        userId: selectedUser,
+const handleAssignTask = async () => {
+  // Check if all necessary fields are filled
+  if (!selectedUser || !newTaskTitle || !newTaskDescription || !newTaskDeadline) {
+    toast.warning('Please complete all fields');  // Show warning if fields are missing
+    return;
+  }
+
+  // Log selectedUser to verify the assigned user ID
+  console.log("Assigned User ID:", selectedUser);
+
+  try {
+    const response = await axios.post(
+      'http://localhost:3000/task',  // Correct task creation endpoint
+      {
         title: newTaskTitle,
         description: newTaskDescription,
-        deadline: newTaskDeadline,
-      };
+        deadline: new Date(newTaskDeadline).toISOString(),  // Deadline as ISO string
+        assignedUserId: selectedUser,  // This is the ID of the user the task is assigned to
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`  // Include JWT token in headers
+        }
+      }
+    );
 
-      // Sending a POST request to create a new task for the selected user
-      await axios.post(
-        'http://localhost:3000/auth/admin/assign-task',
-        taskData,
-        { headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` } }
-      );
-      
-      message.success('Task assigned successfully');
-      setIsModalVisible(false);
-      fetchUsersWithTasks(); // Refresh users to reflect updated tasks
-      fetchTasks(); // Refresh task table
-    } catch (error) {
-      console.error('Error assigning task:', error);
-      message.error('Failed to assign task');
-    }
-  };
+    // Success notification
+    toast.success('Task created and assigned successfully!');
+    setAlertMessage('Task Created: The task was added successfully!');
+    setAlertType('success');
+    setNewTaskTitle('');  // Clear input fields
+    setNewTaskDescription('');
+    setNewTaskDeadline(null);
+    setIsModalVisible(false);
+
+    // Fetch updated data for users and tasks
+    fetchUsersWithTasks();
+    fetchTasks();
+
+    // Clear success message after 2 seconds
+    setTimeout(() => setAlertMessage(null), 2000);
+
+  } catch (error) {
+    console.error('Error creating task:', error);
+    toast.error('Error: Could not create the task.');  // Error notification
+
+    setAlertMessage('Error: Could not create the task.');
+    setAlertType('error');
+
+    // Clear error message after 2 seconds
+    setTimeout(() => setAlertMessage(null), 2000);
+  }
+};
+
+  
 
   // Search functionality for users
   const handleUserSearch = (value) => {
@@ -130,10 +164,10 @@ const AdminDashboard = () => {
       key: 'assign',
       render: (_, record) => (
         <Button 
-          onClick={() => {
-            setSelectedUser(record.userId);
-            setIsModalVisible(true);
-          }}
+        onClick={() => {
+          setSelectedUser(record.userId);  // This will set the selected user's ID
+          setIsModalVisible(true);  // Open the modal to assign a task
+        }}
         >
           Assign Task
         </Button>
@@ -247,6 +281,8 @@ const AdminDashboard = () => {
           </Form.Item>
         </Form>
       </Modal>
+      {/* Add the ToastContainer to show the notifications */}
+      <ToastContainer />
     </div>
   );
 };
