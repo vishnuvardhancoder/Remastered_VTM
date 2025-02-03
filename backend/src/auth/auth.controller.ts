@@ -80,54 +80,67 @@ export class AuthController {
    */
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  @Get('google/redirect')
   async googleAuthRedirect(@Req() req, @Res() res) {
-    const googleUser = req.user; // User object from Google strategy
-    // console.log('Google User:', googleUser); // Log Google User
+      const googleUser = req.user; // User object from Google strategy
+      let profileImage = googleUser.picture || '';  // Extract profile image from Google profile
+  
+      // If profileImage is empty, set a default image (optional)
+      if (!profileImage) {
+          profileImage = 'https://example.com/default-profile-image.png';  // Replace with your default image URL
+      }
+  
+      try {
+          let existingUser = await this.userService.findByGoogleId(googleUser.googleId);
+          let accessToken: string;
+          let googleUserId: string;
+          let internalUserId: string;
+          let username: string;
+  
+          if (existingUser) {
+              // Existing user
+              accessToken = (await this.authService.googleLogin(existingUser)).access_token;
+              googleUserId = existingUser.googleId;
+              internalUserId = existingUser.userId.toString();
+              username = existingUser.username;
+              profileImage = existingUser.profileImage || profileImage;  // Use stored or Google image
+          } else {
+              // Extract username without @gmail.com
+              const extractedUsername = googleUser.email.replace(/@gmail\.com$/, '');
+              console.log("Extracted Username:", extractedUsername);
+  
+              // New user registration
+              const newUser = await this.authService.register({
+                  username: extractedUsername,
+                  email: googleUser.email,
+                  firstname: googleUser.firstName || '',
+                  lastname: googleUser.lastName || '',
+                  password: '', // No password for Google users
+                  googleId: googleUser.googleId,
+                  profileImage: profileImage,  // Store Google profile image
+              });
+  
+              accessToken = (await this.authService.googleLogin(newUser)).access_token;
+              googleUserId = newUser.googleId;
+              internalUserId = newUser.userId.toString();
+              username = newUser.username;
+              profileImage = newUser.profileImage;
+          }
+  
+          // Log profile image to verify if it's correctly passed
+          console.log('Redirecting with Profile Image:', profileImage);
+  
+          // Redirect with necessary parameters, make sure profile image is properly URL encoded
+          const redirectUri = `http://localhost:3001/callback?access_token=${accessToken}&user_id=${internalUserId}&google_user_id=${googleUserId}&username=${username}&profile_image=${encodeURIComponent(profileImage)}`;
+          console.log('Redirect URL:', redirectUri);
 
-    // Try to find the user by googleId first, then by email
-    this.userService.findByGoogleId(googleUser.googleId)
-      .then(async (existingUser) => {
-        let accessToken: string;
-        let googleUserId: string;
-        let internalUserId: string;  // Variable to hold the internal user ID
-        let username: string;  // Variable to hold username
-
-        if (existingUser) {
-          // Existing user, generate JWT token
-          accessToken = (await this.authService.googleLogin(existingUser)).access_token;
-          googleUserId = existingUser.googleId; // Use the existing user's googleId
-          internalUserId = existingUser.userId.toString(); // Cast internal user ID to string
-          username = existingUser.username;  // Get username
-        } else {
-          // New user, create an account and generate JWT token
-          const newUser = await this.authService.register({
-            username: googleUser.email,
-            email: googleUser.email,
-            firstname: googleUser.firstName || '',
-            lastname: googleUser.lastName || '',
-            password: '', // No password needed for Google users
-            googleId: googleUser.googleId, // Store the googleId in DB
-          });
-          accessToken = (await this.authService.googleLogin(newUser)).access_token;
-          googleUserId = newUser.googleId; // Use the newly created user's googleId
-          internalUserId = newUser.userId.toString(); // Cast internal user ID to string
-          username = newUser.username;  // Get username for new user
-        }
-
-        // console.log('Generated Access Token:', accessToken); // Log Access Token
-
-        // Redirect with internalUserId, googleUserId, accessToken, and username
-        const redirectUri = `http://localhost:3001/callback?access_token=${accessToken}&user_id=${internalUserId}&google_user_id=${googleUserId}&username=${username}`;
-        return res.redirect(redirectUri);
-      })
-      .catch((error) => {
-        console.error('Error during Google authentication:', error);
-
-        // Redirect to login with an error message
-        return res.redirect('http://localhost:3001/login?error=authentication_failed');
-      });
+          
+          return res.redirect(redirectUri);
+      } catch (error) {
+          console.error('Error during Google authentication:', error);
+          return res.redirect('http://localhost:3001/login?error=authentication_failed');
+      }
   }
+  
 
   /**
    * Get the internal userId based on the Google User ID.

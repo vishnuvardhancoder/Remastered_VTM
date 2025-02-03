@@ -32,4 +32,7 @@ export class User {
 
   @OneToMany(() => Task, (task) => task.user, { cascade: true }) // Ensure user-task relationship
   tasks: Task[];
+
+  @Column({ nullable: true })
+  profileImage: string;  // Add this field
 }

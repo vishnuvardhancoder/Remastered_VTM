@@ -25,4 +25,8 @@ export class CreateUserDto {
   @IsOptional()  // Make googleUserId optional, as it's only relevant for Google login
   @IsString()
   googleUserId?: string;
+
+  @IsOptional()
+  @IsString()
+  profileImage?: string;  // Added profileImage as optional field
 }

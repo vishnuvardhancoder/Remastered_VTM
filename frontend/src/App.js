@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Button, Avatar, message, Tooltip } from 'antd';
+import { Layout, Typography, Button, Avatar, message, Tooltip,Menu ,Dropdown} from 'antd';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
@@ -9,6 +9,7 @@ import LandingPage from './pages/LandingPage';
 import Callback from './components/Callback';
 import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 
 const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
@@ -40,14 +41,30 @@ const Dashboard = ({ tasks, setTasks }) => (
 const AppHeader = () => {
   const navigate = useNavigate();
   const isAuthenticated = !!localStorage.getItem('access_token');
-  const username = localStorage.getItem('username') || 'Guest'; // Retrieve username
-  const role = localStorage.getItem('role') || 'Guest'; // Retrieve role, default to 'Guest' if not available
+  const username = localStorage.getItem('username') || 'Guest';
+  const profileImage = localStorage.getItem('profile_image'); // Get profile image from localStorage
+
+  // Debug log to check the value of profileImage
+  console.log('Profile Image in Header:', profileImage);
 
   const handleLogout = () => {
     localStorage.clear();
     message.success('Logged out successfully!');
     navigate('/login');
   };
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1" disabled>
+        {username}
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="2" onClick={handleLogout} icon={<LogoutOutlined style={{ color: 'red' }} />} >
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Header
       style={{
@@ -62,30 +79,26 @@ const AppHeader = () => {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
         <Avatar style={{ backgroundColor: '#ffffff', color: '#1e3c72', fontWeight: 'bold' }}>VTM</Avatar>
-        <Title level={2} style={{ margin: 0, marginLeft: '5px', fontWeight: '600', fontSize: 'clamp(18px, 4vw, 24px)' }}>
-          Task Manager
-        </Title>
+        <span style={{ fontSize: '20px', fontWeight: '600' }}>Task Manager</span>
       </div>
 
       {isAuthenticated && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {/* Avatar and Username Section */}
-          <Tooltip title={username}>
-            <Avatar style={{ backgroundColor: '#87d068' }}>
-              {username.charAt(0)?.toUpperCase()}
-            </Avatar>
+        <Dropdown overlay={menu} trigger={['hover', 'click']}>
+          <Tooltip>
+            <Avatar
+              size={40}
+              src={profileImage || undefined} // Display the profile image or fallback to the default icon
+              icon={!profileImage && <UserOutlined />}
+              style={{ cursor: 'pointer' }}
+            />
           </Tooltip>
-          <span style={{ fontSize: '16px', fontWeight: '500', marginLeft:'-8px' }}>{role === 'admin' ? 'Admin' : username}</span>
-
-          {/* Logout Button */}
-          <Button type="primary" danger onClick={handleLogout}>
-            Logout
-          </Button>
-        </div>
+        </Dropdown>
       )}
     </Header>
   );
 };
+
+
 
 const AppFooter = () => (
   <Footer style={{ textAlign: 'center', padding: '10px', fontSize: 'clamp(12px, 3vw, 14px)' }}>
@@ -115,18 +128,41 @@ const App = () => {
     const queryParams = new URLSearchParams(window.location.search);
     const token = queryParams.get('access_token');
     const userId = queryParams.get('userId');
-  
-    if (token) {
-      localStorage.setItem('access_token', token);
-      localStorage.setItem('userId', userId);
-      message.success('Logged in successfully!');
-      
-      queryParams.delete('access_token');
-      queryParams.delete('userId');
-      window.history.replaceState({}, '', `${window.location.pathname}?${queryParams.toString()}`);
-      navigate('/dashboard', { replace: true });
+    const profileImage = queryParams.get('profile_image');
+    
+    console.log('Profile Image from URL:', profileImage);  // Debug log to verify the value
+
+    if (token && userId) {
+        localStorage.setItem('access_token', token);
+        localStorage.setItem('userId', userId);
+
+        if (profileImage) {
+            const decodedProfileImage = decodeURIComponent(profileImage);  // Decode the profile image
+            localStorage.setItem('profile_image', decodedProfileImage);  // Store the decoded profile image
+            console.log('Profile image stored in localStorage:', decodedProfileImage);  // Debug log
+        } else {
+            console.log('No profile image found');
+        }
+
+        message.success('Logged in successfully!');
+
+        // Clean up the URL params without reloading the page
+        queryParams.delete('access_token');
+        queryParams.delete('userId');
+        queryParams.delete('profile_image');
+        window.history.replaceState({}, '', `${window.location.pathname}?${queryParams.toString()}`);
+
+        navigate('/dashboard', { replace: true });
+    } else {
+        console.error('No access_token or userId found in the URL');
     }
-  }, [navigate]);
+    console.log('Stored Profile Image:', localStorage.getItem('profile_image'));
+
+}, [navigate]);
+
+
+  
+  
   
   return (
     <>

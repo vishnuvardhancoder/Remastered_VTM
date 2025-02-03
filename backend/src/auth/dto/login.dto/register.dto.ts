@@ -31,4 +31,8 @@ export class RegisterDto {
   @IsString()
   googleId?: string;
 
+  @IsOptional()
+  @IsString()
+  profileImage?: string;  // Add this field
+
 }
