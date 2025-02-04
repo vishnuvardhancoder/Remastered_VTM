@@ -43,6 +43,8 @@ const AppHeader = () => {
   const isAuthenticated = !!localStorage.getItem("access_token");
   const username = localStorage.getItem("username") || "Guest";
   const profileImage = localStorage.getItem("profile_image"); // Get profile image from localStorage
+  console.log("Profile Image URL:", profileImage);
+  const profileImageWithTimestamp = profileImage ? `${profileImage}?t=${new Date().getTime()}` : undefined;
 
   // Log the first letter of the username to check if it's correct
   const firstLetterOfUsername = username.charAt(0).toUpperCase();
@@ -66,6 +68,15 @@ const AppHeader = () => {
     </Menu>
   );
 
+  const getPublicImageURL = (url) => {
+    return url.includes("googleusercontent.com") ? url.split("=")[0] + "=s96-c" : url;
+  };
+  
+  // const profileImageURL = profileImage ? getPublicImageURL(profileImage) : undefined;
+  // const modifiedImageUrl = profileImage ? `${profileImage}?sz=100` : undefined;
+  const proxyImageURL = profileImage
+  ? `https://images.weserv.nl/?url=${encodeURIComponent(profileImage)}`
+  : undefined;
   return (
     <Header
       style={{
@@ -88,18 +99,24 @@ const AppHeader = () => {
       {isAuthenticated && (
         <Dropdown overlay={menu} trigger={["hover", "click"]}>
           <Tooltip>
-            <Avatar
-              size={40}
-              src={profileImage || undefined} // Show profile image if valid
-              icon={!profileImage && firstLetterOfUsername} // Show user icon if no image
-              style={{
-                cursor: "pointer",
-                backgroundColor: profileImage ? "transparent" : "#87d068", // Background for initials
-              }}
-            >
-              {/* Display first letter of username for normal users */}
-              {!profileImage && firstLetterOfUsername}
-            </Avatar>
+            
+          <Avatar
+  size={40}
+  src={proxyImageURL}
+  onError={(event) => {
+    if (event?.currentTarget) {
+      event.currentTarget.onerror = null;
+      event.currentTarget.src = "https://via.placeholder.com/40";
+    }
+  }}
+  icon={!profileImage && firstLetterOfUsername}
+  style={{
+    cursor: "pointer",
+    backgroundColor: profileImage ? "transparent" : "#87d068",
+  }}
+>
+  {!profileImage && firstLetterOfUsername}
+</Avatar>
           </Tooltip>
         </Dropdown>
       )}

@@ -64,7 +64,11 @@ const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
   
 
   return (
-    <Card title="Add New Task" bordered={false} style={{ marginBottom: '20px' }}>
+    <Card title="Add New Task" bordered={true} 
+    style={{ 
+      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
+      borderRadius: '8px',
+      padding: '16px', marginBottom:'2rem' }}>
       {alertMessage && (
         <Alert message={alertMessage} type={alertType} showIcon style={{ marginBottom: '20px' }} />
       )}
