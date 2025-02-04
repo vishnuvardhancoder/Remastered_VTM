@@ -12,6 +12,7 @@ const Callback = () => {
     const userId = urlParams.get("user_id");  // Internal user ID (UUID)
     const googleUserId = urlParams.get("google_user_id");  // Google user ID
     const username = urlParams.get("username");  // Username
+    const profileImage = urlParams.get("profile_image"); // ✅ Profile Image URL
 
     if (accessToken && userId && username) {
       // Store the access token in localStorage
@@ -26,6 +27,13 @@ const Callback = () => {
 
       // Store the username in localStorage
       localStorage.setItem("username", username);
+
+      // ✅ Store the profile image if available
+      if (profileImage) {
+        localStorage.setItem("profile_image", profileImage);
+      }
+
+      console.log("✅ Profile Image Stored:", profileImage);
 
       // Navigate to the dashboard
       message.success("Login successful! Redirecting to dashboard...");

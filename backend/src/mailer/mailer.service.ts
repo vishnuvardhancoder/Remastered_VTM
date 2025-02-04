@@ -7,6 +7,8 @@ export class MailService {
 
   async sendTaskAssignedEmail(toEmail: string, taskDetails: string) {
     try {
+      console.log(`📧 Preparing to send email to ${toEmail}...`);
+
       await this.mailerService.sendMail({
         to: toEmail,
         subject: 'New Task Assigned',
@@ -16,9 +18,9 @@ export class MailService {
         html: `<p>You have been assigned a new task: <strong>${taskDetails}</strong></p>`,
       });
 
-      console.log(`Email sent successfully to ${toEmail}`);
+      console.log(`✅ Email sent successfully to ${toEmail}`);
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error('❌ Error sending email:', error);
     }
   }
 }

@@ -140,6 +140,7 @@ export class TaskService {
   }
 
   // ✅ Assign a task to a user (Admin feature)
+// ✅ Assign a task to a user (Admin feature)
 async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise<Task> {
   console.log(`📌 Assigning Task ${taskId} to User ${userId}`);
 
@@ -155,6 +156,11 @@ async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise
     throw new NotFoundException('User not found');
   }
 
+  // Ensure the user has an email before sending an email
+  if (!user.email) {
+    console.warn(`⚠️ User ${userId} does not have an email. Task assigned without notification.`);
+  }
+
   // Assign task to user
   task.userId = userId;
 
@@ -168,16 +174,23 @@ async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise
   // Save the updated task
   const updatedTask = await this.taskRepository.save(task);
 
-  // ✅ Send email notification to the assigned user
-  try {
-    await this.mailService.sendTaskAssignedEmail(user.email, `Task: ${task.taskId} has been assigned to you.`);
-    console.log(`📧 Email sent to ${user.email} about the assigned task.`);
-  } catch (error) {
-    console.error('❌ Failed to send email:', error);
+  // ✅ Send email notification to the assigned user (only if email exists)
+  if (user.email) {
+    try {
+      console.log(`📧 Sending email to ${user.email}...`);
+      await this.mailService.sendTaskAssignedEmail(
+        user.email,
+        `Task: ${task.taskId} has been assigned to you. Deadline: ${deadline ? deadline.toISOString() : 'No deadline set'}`
+      );
+      console.log(`✅ Email successfully sent to ${user.email}`);
+    } catch (error) {
+      console.error('❌ Failed to send email:', error);
+    }
   }
 
   return updatedTask;
 }
+
 
 
   // ✅ Fetch all tasks with user details (Admin feature)

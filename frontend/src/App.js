@@ -40,17 +40,18 @@ const Dashboard = ({ tasks, setTasks }) => (
 
 const AppHeader = () => {
   const navigate = useNavigate();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  const username = localStorage.getItem('username') || 'Guest';
-  const profileImage = localStorage.getItem('profile_image'); // Get profile image from localStorage
+  const isAuthenticated = !!localStorage.getItem("access_token");
+  const username = localStorage.getItem("username") || "Guest";
+  const profileImage = localStorage.getItem("profile_image"); // Get profile image from localStorage
 
-  // Debug log to check the value of profileImage
-  console.log('Profile Image in Header:', profileImage);
+  // Log the first letter of the username to check if it's correct
+  const firstLetterOfUsername = username.charAt(0).toUpperCase();
+  console.log("First letter of username:", firstLetterOfUsername); // Debugging
 
   const handleLogout = () => {
     localStorage.clear();
-    message.success('Logged out successfully!');
-    navigate('/login');
+    message.success("Logged out successfully!");
+    navigate("/login");
   };
 
   const menu = (
@@ -59,7 +60,7 @@ const AppHeader = () => {
         {username}
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="2" onClick={handleLogout} icon={<LogoutOutlined style={{ color: 'red' }} />} >
+      <Menu.Item key="2" onClick={handleLogout} icon={<LogoutOutlined style={{ color: "red" }} />}>
         Logout
       </Menu.Item>
     </Menu>
@@ -68,29 +69,37 @@ const AppHeader = () => {
   return (
     <Header
       style={{
-        background: '#f1f1f1',
-        color: 'black',
-        padding: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+        background: "#f1f1f1",
+        color: "black",
+        padding: "20px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-        <Avatar style={{ backgroundColor: '#ffffff', color: '#1e3c72', fontWeight: 'bold' }}>VTM</Avatar>
-        <span style={{ fontSize: '20px', fontWeight: '600' }}>Task Manager</span>
+      {/* Task Manager Logo */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+        <Avatar style={{ backgroundColor: "#ffffff", color: "#1e3c72", fontWeight: "bold" }}>VTM</Avatar>
+        <span style={{ fontSize: "20px", fontWeight: "600" }}>Task Manager</span>
       </div>
 
+      {/* Profile Avatar with Dropdown */}
       {isAuthenticated && (
-        <Dropdown overlay={menu} trigger={['hover', 'click']}>
+        <Dropdown overlay={menu} trigger={["hover", "click"]}>
           <Tooltip>
             <Avatar
               size={40}
-              src={profileImage || undefined} // Display the profile image or fallback to the default icon
-              icon={!profileImage && <UserOutlined />}
-              style={{ cursor: 'pointer' }}
-            />
+              src={profileImage || undefined} // Show profile image if valid
+              icon={!profileImage && firstLetterOfUsername} // Show user icon if no image
+              style={{
+                cursor: "pointer",
+                backgroundColor: profileImage ? "transparent" : "#87d068", // Background for initials
+              }}
+            >
+              {/* Display first letter of username for normal users */}
+              {!profileImage && firstLetterOfUsername}
+            </Avatar>
           </Tooltip>
         </Dropdown>
       )}
@@ -126,27 +135,39 @@ const App = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
+    console.log('Full URL Query Params:', queryParams); // Log all query params
     const token = queryParams.get('access_token');
     const userId = queryParams.get('userId');
-    const profileImage = queryParams.get('profile_image');
-    
-    console.log('Profile Image from URL:', profileImage);  // Debug log to verify the value
+    const profileImage = localStorage.getItem('profileImage');
+    if (profileImage) {
+    console.log("✅ Profile Image Retrieved:", profileImage);
+} else {
+    console.log("❌ No Profile Image Found in LocalStorage");
+}
+
+
+    console.log('Raw Profile Image from URL:', profileImage);  // Debug log
 
     if (token && userId) {
         localStorage.setItem('access_token', token);
         localStorage.setItem('userId', userId);
 
         if (profileImage) {
-            const decodedProfileImage = decodeURIComponent(profileImage);  // Decode the profile image
-            localStorage.setItem('profile_image', decodedProfileImage);  // Store the decoded profile image
-            console.log('Profile image stored in localStorage:', decodedProfileImage);  // Debug log
+            try {
+                profileImage = decodeURIComponent(profileImage);
+                profileImage = decodeURIComponent(profileImage); // Double decoding
+                console.log('Decoded Profile Image:', profileImage);
+                localStorage.setItem('profile_image', profileImage);
+            } catch (error) {
+                console.error('Error decoding profile image:', error);
+            }
         } else {
-            console.log('No profile image found');
+            console.warn('No profile image found in URL parameters');
         }
 
         message.success('Logged in successfully!');
 
-        // Clean up the URL params without reloading the page
+        // Clean up the URL params
         queryParams.delete('access_token');
         queryParams.delete('userId');
         queryParams.delete('profile_image');
@@ -156,9 +177,12 @@ const App = () => {
     } else {
         console.error('No access_token or userId found in the URL');
     }
-    console.log('Stored Profile Image:', localStorage.getItem('profile_image'));
+
+    console.log('Final Stored Profile Image:', localStorage.getItem('profile_image'));
 
 }, [navigate]);
+
+
 
 
   
