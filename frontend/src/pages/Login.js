@@ -8,6 +8,9 @@ import googleLogo from '../assets/images/google.png';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
 import ParticleBackground from '../components/ParticleBackground';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+// import { Link } from 'react-router-dom';
+
 
 const { Title } = Typography;
 
@@ -136,7 +139,12 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      <ParticleBackground/>
+      {/* Arrow for navigation to landing page */}
+      <Link to="/landingpage" className="back-arrow">
+        <ArrowLeftOutlined style={{ fontSize: '24px', color: '#fff' }} />
+      </Link>
+  
+      <ParticleBackground />
       <div className="login-container">
         <Title level={2} className="login-title">VTM Login</Title>
         <Form
@@ -162,7 +170,7 @@ const Login = () => {
             name="password"
             rules={[
               { required: true, message: 'Please enter your password' },
-              { min: 6, message: 'Password must be at least 6 characters long' }, 
+              { min: 6, message: 'Password must be at least 6 characters long' },
             ]}
           >
             <Input.Password
@@ -182,10 +190,10 @@ const Login = () => {
             </Button>
           </Form.Item>
         </Form>
-
+  
         {/* Google Login Button Component */}
         <GoogleLoginButton loading={googleLoading} setLoading={setGoogleLoading} />
-
+  
         <div className="register-link">
           Don't have an account? <Link to="/register">Register here</Link>
         </div>
@@ -193,7 +201,7 @@ const Login = () => {
           Are you Admin? <Link to="/admin/login">Click here</Link>
         </div>
       </div>
-
+  
       {/* ToastContainer Outside the Login Box */}
       <ToastContainer
         position="top-right"
@@ -208,6 +216,7 @@ const Login = () => {
       />
     </div>
   );
+  
 };
 
 export default Login;

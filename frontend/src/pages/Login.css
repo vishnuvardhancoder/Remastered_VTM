@@ -110,3 +110,11 @@
 .register-link a:hover {
   color: #0083b0;
 }
+
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10; /* Ensure the arrow is above other elements */
+  cursor: pointer;
+}

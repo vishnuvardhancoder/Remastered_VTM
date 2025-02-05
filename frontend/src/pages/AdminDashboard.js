@@ -187,19 +187,25 @@ const AdminDashboard = () => {
   };
 
   // Search functionality for tasks
-  const handleTaskSearch = (value) => {
-    setTaskSearchQuery(value);
-    if (value.trim() === '') {
-      setFilteredTasks(tasks);
-    } else {
-      const filtered = tasks.filter(task =>
+  // Search functionality for tasks, including user search by username
+const handleTaskSearch = (value) => {
+  setTaskSearchQuery(value);
+  if (value.trim() === '') {
+    setFilteredTasks(tasks);
+  } else {
+    const filtered = tasks.filter((task) => {
+      // Filter tasks by title, description, or username
+      return (
         task.title.toLowerCase().includes(value.toLowerCase()) ||
-        task.description.toLowerCase().includes(value.toLowerCase())
+        task.description.toLowerCase().includes(value.toLowerCase()) ||
+        (task.assignedUser && task.assignedUser.username.toLowerCase().includes(value.toLowerCase()))
       );
-      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setFilteredTasks(filtered);
-    }
-  };
+    });
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort tasks by created date
+    setFilteredTasks(filtered);
+  }
+};
+
 
   // User Table Columns
   const userColumns = [
