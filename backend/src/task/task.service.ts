@@ -30,23 +30,21 @@ export class TaskService {
   async createTask(
     title: string, 
     description: string, 
-    assignedUserId: string,  // Assign task to the user based on this ID
-    deadline: Date
+    assignedUserId: string,  
+    deadline: Date // Make deadline optional
   ): Promise<Task> {
     console.log("🚀 Assigned User ID:", assignedUserId);
     
-    // Create the task for the assigned user
     const task = new Task();
     task.title = title;
     task.description = description;
-    task.deadline = deadline;
-    task.status = 'Not Started';  // Default status
-    task.completed = false;      // Default completed status
-    task.userId = assignedUserId;  // Task is assigned to the specific user
-    
+    task.deadline = deadline;  // Use null if no deadline is provided
+    task.status = 'Not Started';  
+    task.completed = false;      
+    task.userId = assignedUserId;  
+  
     console.log("📝 Saving Task with assignedUserId:", task.userId);
     
-    // Save the task and return the saved task
     return this.taskRepository.save(task);
   }
   

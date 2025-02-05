@@ -1,4 +1,4 @@
-  import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
   import { Table, Button, notification, Modal, Form, Input, Checkbox, Popover, Menu, Row, Col, Card, Tag } from 'antd';
   import { EllipsisOutlined, CheckOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined } from '@ant-design/icons';
   import axios from 'axios';
@@ -29,6 +29,8 @@
           task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           task.description.toLowerCase().includes(searchQuery.toLowerCase())
         );
+        // Sorting after filtering
+        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setFilteredTasks(filtered);
       }
     }, [tasks, searchQuery]);
@@ -67,18 +69,9 @@
     };
 
     const handleSearch = (value) => {
-      setSearchQuery(value);
-      if (value.trim() === '') {
-        setFilteredTasks(tasks);
-      } else {
-        const filtered = tasks.filter(task =>
-          task.title.toLowerCase().includes(value.toLowerCase()) ||
-          task.description.toLowerCase().includes(value.toLowerCase())
-        );
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setFilteredTasks(filtered);
-      }
+      setSearchQuery(value); // Update search query
     };
+
 
     const markCompleted = (taskId) => {
       const token = localStorage.getItem('access_token');
@@ -520,7 +513,7 @@
       {/* Regular Task Table */}
       <div style={{ overflowX: 'auto', width: '100%', marginBottom: '30px' }}>
       <Table 
- dataSource={tasks.filter(task => task.deadline === null)}  // Filter tasks with no deadline
+ dataSource={filteredTasks.filter((task) => !task.deadline)}  // Filter tasks with no deadline
   columns={[
     {
       title: 'Title',

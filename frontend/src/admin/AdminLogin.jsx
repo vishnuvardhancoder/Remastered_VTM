@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Row, Col } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeftOutlined } from '@ant-design/icons'; // Import the arrow icon
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import styles for the toasts
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -38,8 +39,16 @@ const AdminLogin = () => {
     }
   };
 
+  const handleBackClick = () => {
+    navigate('/login'); // Navigate to the login page when the arrow is clicked
+  };
+
   return (
     <div style={styles.container}>
+      <ArrowLeftOutlined 
+        style={styles.arrow} 
+        onClick={handleBackClick} 
+      />
       <Row justify="center" align="middle" style={styles.row}>
         <Col xs={24} sm={18} md={12} lg={8} xl={6}>
           <div style={styles.card}>
@@ -47,7 +56,7 @@ const AdminLogin = () => {
             <Form
               onFinish={handleLogin}
               layout="vertical"
-              initialValues={{ username: '', password: '' }} // Ensure the form is empty on load
+              initialValues={{ username: '', password: '' }}
             >
               <Form.Item
                 label="Email"
@@ -58,7 +67,7 @@ const AdminLogin = () => {
                   size="large"
                   placeholder="Enter your email"
                   style={styles.input}
-                  autoComplete="new-password" // Prevent autofill
+                  autoComplete="new-password"
                 />
               </Form.Item>
 
@@ -71,7 +80,7 @@ const AdminLogin = () => {
                   size="large"
                   placeholder="Enter your password"
                   style={styles.input}
-                  autoComplete="new-password" // Prevent autofill
+                  autoComplete="new-password"
                 />
               </Form.Item>
 
@@ -100,10 +109,19 @@ const styles = {
   container: {
     position: 'relative',
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #6f42c1, #4e73df)', // Cool gradient background
+    background: 'linear-gradient(135deg, #6f42c1, #4e73df)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  arrow: {
+    position: 'absolute',
+    top: '20px',
+    left: '20px',
+    fontSize: '24px',
+    color: '#ffffff',
+    cursor: 'pointer',
+    zIndex: 1,
   },
   row: {
     width: '100%',
@@ -117,13 +135,13 @@ const styles = {
     textAlign: 'center',
     minWidth: '300px',
     maxWidth: '500px',
-    border: '2px solid #4e73df', // Vibrant border color
+    border: '2px solid #4e73df',
   },
   heading: {
     fontSize: '28px',
     fontWeight: 'bold',
     marginBottom: '20px',
-    color: '#4e73df', // Cool blue heading color
+    color: '#4e73df',
   },
   input: {
     width: '100%',

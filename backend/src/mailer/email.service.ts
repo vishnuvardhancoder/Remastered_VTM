@@ -23,7 +23,6 @@ export class EmailService {
 
   async sendEmail(dto: sendEmailDto) {
     const { recipients, subject, html } = dto;
-
     const transport = this.emailTransport();
 
     const options: nodemailer.SendMailOptions = {
@@ -39,4 +38,13 @@ export class EmailService {
       console.log('Error sending mail: ', error);
     }
   }
-}
+
+  // ✅ New method to send task assignment emails
+  async sendTaskAssignmentEmail(to: string, task: any) {
+    await this.sendEmail({
+      recipients: [to],  // Convert single email string to an array
+      subject: `New Task Assigned: ${task.title}`,
+      html: '',
+    });
+  }
+}  

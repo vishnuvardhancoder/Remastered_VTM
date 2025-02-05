@@ -16,7 +16,7 @@ import { EmailModule } from 'src/mailer/mailer.module';
     // MailerCustomModule,
     EmailModule,
   ],
-  providers: [TaskService],
+  providers: [TaskService,EmailService],
   controllers: [TaskController],
   exports: [TaskService],  // Export TaskService so it can be used in other modules
 })

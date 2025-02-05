@@ -26,20 +26,27 @@ export class UserService {
   }
 
   // Method to create a new user
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const existingUser = await this.findByUsername(createUserDto.username);
-    if (existingUser) {
-      throw new ConflictException(`Username "${createUserDto.username}" already exists`);
-    }
-
-    const existingEmail = await this.findByEmail(createUserDto.email);
-    if (existingEmail) {
-      throw new ConflictException(`Email "${createUserDto.email}" already exists`);
-    }
-
-    const user = this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
+  // Method to create a new user
+async create(createUserDto: CreateUserDto): Promise<User> {
+  // If the username is from Google login (contains '@')
+  if (createUserDto.username && createUserDto.username.includes('@')) {
+    // Remove everything after '@' to use part before as the username
+    createUserDto.username = createUserDto.username.split('@')[0];
   }
+
+  const existingUser = await this.findByUsername(createUserDto.username);
+  if (existingUser) {
+    throw new ConflictException(`Username "${createUserDto.username}" already exists`);
+  }
+
+  const existingEmail = await this.findByEmail(createUserDto.email);
+  if (existingEmail) {
+    throw new ConflictException(`Email "${createUserDto.email}" already exists`);
+  }
+
+  const user = this.userRepository.create(createUserDto);
+  return this.userRepository.save(user);
+}
 
   // Method to get all users
   async findAll(): Promise<User[]> {

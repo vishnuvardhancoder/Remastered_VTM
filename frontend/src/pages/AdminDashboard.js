@@ -76,9 +76,9 @@ const AdminDashboard = () => {
       toast.warning('Please complete all fields');
       return;
     }
-
+  
     console.log("Assigned User ID:", selectedUser);
-
+  
     try {
       // First API Call: Assign the Task
       const taskResponse = await axios.post(
@@ -91,73 +91,83 @@ const AdminDashboard = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
         }
       );
-
+  
       // Debugging: Check the response structure
       console.log("Task Response:", taskResponse);
-
+  
       // Extract user email and username (adjust based on response structure)
       const assignedUserEmail = taskResponse.data.assignedUserEmail || taskResponse.data.user?.email;
       const assignedUserName = taskResponse.data.assignedUserName || taskResponse.data.user?.username;
       console.log("Assigned User Name:", assignedUserName); // Debugging
-
-      // Second API Call: Send Email Notification and show success notification
+  
+      // Show success notification for task assignment
+      toast.success(`Task assigned to ${assignedUserName || 'User'}!`);
+  
+      // Send email asynchronously without waiting for it to complete
       if (assignedUserEmail) {
-        await axios.post(
-          'http://localhost:3000/email/send',
-          {
-            recipients: [assignedUserEmail],
-            subject: `New Task Assigned: ${newTaskTitle}`,
-            html: `<p>Hello ${assignedUserName},</p>
-                   <p>A new task has been assigned to you:</p>
-                   <p><strong>Title:</strong> ${newTaskTitle}</p>
-                   <p><strong>Description:</strong> ${newTaskDescription}</p>
-                   <p><strong>Deadline:</strong> ${new Date(newTaskDeadline).toLocaleString()}</p>
-                   <p>Thank you!</p>
-                   <p>Regards</p>
-                   <p>VTaskManager</p>`,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`
-            }
+        // Async email sending
+        setTimeout(async () => {
+          try {
+            await axios.post(
+              'http://localhost:3000/email/send',
+              {
+                recipients: [assignedUserEmail],
+                subject: `New Task Assigned: ${newTaskTitle}`,
+                html: `<p>Hello ${assignedUserName},</p>
+                      <p>A new task has been assigned to you:</p>
+                      <p><strong>Title:</strong> ${newTaskTitle}</p>
+                      <p><strong>Description:</strong> ${newTaskDescription}</p>
+                      <p><strong>Deadline:</strong> ${new Date(newTaskDeadline).toLocaleString()}</p>
+                      <p>Thank you!</p>
+                      <p>Regards</p>
+                      <p>VTaskManager</p>`,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                },
+              }
+            );
+  
+            toast.success(`Email sent to ${assignedUserEmail}!`);
+          } catch (emailError) {
+            console.error('Error sending email:', emailError);
+            toast.error('Error sending email.');
           }
-        );
-
-        toast.success(`Task assigned and email sent to ${assignedUserEmail}!`);
+        }, 0); // Immediate async call without blocking task creation
       } else {
         toast.warning("User email not available. Email not sent.");
       }
-
-      // Success notification for task assignment
-      setAlertMessage('Task Created: The task was added successfully!');
-      setAlertType('success');
+  
+      // Reset form and close modal
       setNewTaskTitle('');
       setNewTaskDescription('');
       setNewTaskDeadline(null);
       setIsModalVisible(false);
-
+  
       // Fetch updated data
       fetchUsersWithTasks();
       fetchTasks();
-
+  
       // Clear success message after 2 seconds
       setTimeout(() => setAlertMessage(null), 2000);
-
+  
     } catch (error) {
       console.error('Error:', error);
       toast.error('Error: Could not complete the task assignment.');
-
+  
       setAlertMessage('Error: Could not complete the task assignment.');
       setAlertType('error');
-
+  
       // Clear error message after 2 seconds
       setTimeout(() => setAlertMessage(null), 2000);
     }
-};
+  };
+  
 
 
   

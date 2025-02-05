@@ -30,7 +30,8 @@ const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
     const payload = {
       title,
       description,
-      assignedUserId: assignedUser ? assignedUser : null,  // Assigned user (only for admin)
+      assignedUserId: assignedUser ? assignedUser : null,
+      userId,  // Assigned user (only for admin)
     };
 
     // Only add deadline if it's an assigned task
@@ -48,7 +49,13 @@ const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(response => {
-        onTaskCreated(response.data);
+        const { task, assignedUserId } = response.data;
+    
+        // Only add task to local list if it belongs to the current user
+        if (!assignedUserId || assignedUserId === userId) {
+          onTaskCreated(task);
+        }
+    
         setAlertMessage('Task Created Successfully!');
         setAlertType('success');
         form.resetFields();
@@ -60,6 +67,7 @@ const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
         setAlertType('error');
         setTimeout(() => setAlertMessage(null), 2000);
       });
+    
   };
   
 
