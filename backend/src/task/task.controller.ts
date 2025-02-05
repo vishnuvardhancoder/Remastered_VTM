@@ -39,38 +39,51 @@ export class TaskController {
     async create(
         @Body() body: { title: string; description: string; assignedUserId?: string; deadline?: string },
         @Request() req
-    ): Promise<Task> {
+      ): Promise<{ task: Task; assignedUserEmail?: string; assignedUserName?: string }> {
         try {
-            const loggedInUserId = req.user.userId;
-            const isAssignedTask = !!body.assignedUserId; // True if the task is assigned
-    
-            if (isAssignedTask && (!body.deadline || isNaN(Date.parse(body.deadline)))) {
-                console.error("❌ Assigned task requires a valid deadline:", body.deadline);
-                throw new BadRequestException("Assigned tasks must have a valid deadline.");
-            }
-    
-            const finalUserId = isAssignedTask ? body.assignedUserId : loggedInUserId;
-    
-            const user = await this.userService.findById(finalUserId);
-            if (!user) {
-                throw new NotFoundException('Assigned user not found');
-            }
-    
-            const task = await this.taskService.createTask(
-                body.title,
-                body.description,
-                finalUserId,
-                isAssignedTask ? new Date(body.deadline) : null  // Only save deadline for assigned tasks
-            );
-    
-            return task;
+          const loggedInUserId = req.user.userId;
+          const isAssignedTask = !!body.assignedUserId; // True if the task is assigned
+      
+          if (isAssignedTask && (!body.deadline || isNaN(Date.parse(body.deadline)))) {
+            console.error("❌ Assigned task requires a valid deadline:", body.deadline);
+            throw new BadRequestException("Assigned tasks must have a valid deadline.");
+          }
+      
+          const finalUserId = isAssignedTask ? body.assignedUserId : loggedInUserId;
+      
+          const user = await this.userService.findById(finalUserId);
+          if (!user) {
+            throw new NotFoundException('Assigned user not found');
+          }
+      
+          const task = await this.taskService.createTask(
+            body.title,
+            body.description,
+            finalUserId,
+            isAssignedTask ? new Date(body.deadline) : null  // Only save deadline for assigned tasks
+          );
+      
+          // Define the response object with a clear structure
+          const response: { task: Task; assignedUserEmail?: string; assignedUserName?: string } = { task };
+      
+          if (isAssignedTask) {
+            response.assignedUserEmail = user.email; // Add email to the response
+      
+            // Remove everything after the '@' symbol (including '@' itself) to get the username
+            const username = user.email.split('@')[0]; // This will take the part before '@'
+            response.assignedUserName = username; // Send the username without the domain
+      
+            console.log("Assigned User Username:", username); // Debugging
+          }
+      
+          return response;
         } catch (error) {
-            console.error("🚨 Error in Task Creation:", error);
-            throw new InternalServerErrorException('Failed to create task');
+          console.error("🚨 Error in Task Creation:", error);
+          throw new InternalServerErrorException('Failed to create task');
         }
-    }
-    
-    
+      }
+      
+      
       
     
     

@@ -4,7 +4,7 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { User } from 'src/user/entities/user/user';
 import { UserService } from 'src/user/user.service';
-import { MailService } from 'src/mailer/mailer.service';
+import { EmailService } from 'src/mailer/email.service';
 
 @Injectable()
 export class TaskService {
@@ -12,7 +12,7 @@ export class TaskService {
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
     private userService: UserService, // UserService to manage user data
-    private readonly mailService: MailService, // Fix: Removed extra closing parenthesis
+    private readonly mailService: EmailService, // Fix: Removed extra closing parenthesis
   ) {}
 
   // async assignTaskToUser(userEmail: string, taskDetails: string) {
@@ -178,10 +178,12 @@ async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise
   if (user.email) {
     try {
       console.log(`📧 Sending email to ${user.email}...`);
-      await this.mailService.sendTaskAssignedEmail(
-        user.email,
-        `Task: ${task.taskId} has been assigned to you. Deadline: ${deadline ? deadline.toISOString() : 'No deadline set'}`
-      );
+      await this.mailService.sendEmail({
+        recipients: [user.email], // Array of recipient emails
+        subject: 'Task Assignment Notification',
+        html: `<p>Task: ${task.taskId} has been assigned to you.</p>
+               <p>Deadline: ${deadline ? deadline.toISOString() : 'No deadline set'}</p>`,
+      });
       console.log(`✅ Email successfully sent to ${user.email}`);
     } catch (error) {
       console.error('❌ Failed to send email:', error);
@@ -190,6 +192,7 @@ async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise
 
   return updatedTask;
 }
+
 
 
 

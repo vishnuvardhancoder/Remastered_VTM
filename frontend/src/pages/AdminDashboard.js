@@ -70,59 +70,95 @@ const AdminDashboard = () => {
    // Handle task assignment
    
 
-const handleAssignTask = async () => {
-  // Check if all necessary fields are filled
-  if (!selectedUser || !newTaskTitle || !newTaskDescription || !newTaskDeadline) {
-    toast.warning('Please complete all fields');  // Show warning if fields are missing
-    return;
-  }
+   const handleAssignTask = async () => {
+    // Check if all necessary fields are filled
+    if (!selectedUser || !newTaskTitle || !newTaskDescription || !newTaskDeadline) {
+      toast.warning('Please complete all fields');
+      return;
+    }
 
-  // Log selectedUser to verify the assigned user ID
-  console.log("Assigned User ID:", selectedUser);
+    console.log("Assigned User ID:", selectedUser);
 
-  try {
-    const response = await axios.post(
-      'http://localhost:3000/task',  // Correct task creation endpoint
-      {
-        title: newTaskTitle,
-        description: newTaskDescription,
-        deadline: new Date(newTaskDeadline).toISOString(),  // Deadline as ISO string
-        assignedUserId: selectedUser,  // This is the ID of the user the task is assigned to
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`  // Include JWT token in headers
+    try {
+      // First API Call: Assign the Task
+      const taskResponse = await axios.post(
+        'http://localhost:3000/task',
+        {
+          title: newTaskTitle,
+          description: newTaskDescription,
+          deadline: new Date(newTaskDeadline).toISOString(),
+          assignedUserId: selectedUser,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
         }
+      );
+
+      // Debugging: Check the response structure
+      console.log("Task Response:", taskResponse);
+
+      // Extract user email and username (adjust based on response structure)
+      const assignedUserEmail = taskResponse.data.assignedUserEmail || taskResponse.data.user?.email;
+      const assignedUserName = taskResponse.data.assignedUserName || taskResponse.data.user?.username;
+      console.log("Assigned User Name:", assignedUserName); // Debugging
+
+      // Second API Call: Send Email Notification and show success notification
+      if (assignedUserEmail) {
+        await axios.post(
+          'http://localhost:3000/email/send',
+          {
+            recipients: [assignedUserEmail],
+            subject: `New Task Assigned: ${newTaskTitle}`,
+            html: `<p>Hello ${assignedUserName},</p>
+                   <p>A new task has been assigned to you:</p>
+                   <p><strong>Title:</strong> ${newTaskTitle}</p>
+                   <p><strong>Description:</strong> ${newTaskDescription}</p>
+                   <p><strong>Deadline:</strong> ${new Date(newTaskDeadline).toLocaleString()}</p>
+                   <p>Thank you!</p>
+                   <p>Regards</p>
+                   <p>VTaskManager</p>`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+          }
+        );
+
+        toast.success(`Task assigned and email sent to ${assignedUserEmail}!`);
+      } else {
+        toast.warning("User email not available. Email not sent.");
       }
-    );
 
-    // Success notification
-    toast.success('Task created and assigned successfully!');
-    setAlertMessage('Task Created: The task was added successfully!');
-    setAlertType('success');
-    setNewTaskTitle('');  // Clear input fields
-    setNewTaskDescription('');
-    setNewTaskDeadline(null);
-    setIsModalVisible(false);
+      // Success notification for task assignment
+      setAlertMessage('Task Created: The task was added successfully!');
+      setAlertType('success');
+      setNewTaskTitle('');
+      setNewTaskDescription('');
+      setNewTaskDeadline(null);
+      setIsModalVisible(false);
 
-    // Fetch updated data for users and tasks
-    fetchUsersWithTasks();
-    fetchTasks();
+      // Fetch updated data
+      fetchUsersWithTasks();
+      fetchTasks();
 
-    // Clear success message after 2 seconds
-    setTimeout(() => setAlertMessage(null), 2000);
+      // Clear success message after 2 seconds
+      setTimeout(() => setAlertMessage(null), 2000);
 
-  } catch (error) {
-    console.error('Error creating task:', error);
-    toast.error('Error: Could not create the task.');  // Error notification
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error: Could not complete the task assignment.');
 
-    setAlertMessage('Error: Could not create the task.');
-    setAlertType('error');
+      setAlertMessage('Error: Could not complete the task assignment.');
+      setAlertType('error');
 
-    // Clear error message after 2 seconds
-    setTimeout(() => setAlertMessage(null), 2000);
-  }
+      // Clear error message after 2 seconds
+      setTimeout(() => setAlertMessage(null), 2000);
+    }
 };
+
 
   
 
