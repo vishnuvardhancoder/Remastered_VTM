@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Alert, Card, Row, Col } from 'antd';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+
 
 const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
   const [form] = Form.useForm();
@@ -11,21 +13,17 @@ const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
     const { title, description, deadline } = values;
     const token = localStorage.getItem('access_token');
     const userId = localStorage.getItem('user_id');  // User's own ID (UUID)
-
+  
     if (!token) {
-      setAlertMessage('Error: Please log in.');
-      setAlertType('error');
-      setTimeout(() => setAlertMessage(null), 2000);
+      toast.error('Error: Please log in.', { autoClose: 2000 });
       return;
     }
-
+  
     if (!userId) {
-      setAlertMessage('Error: User not found.');
-      setAlertType('error');
-      setTimeout(() => setAlertMessage(null), 2000);
+      toast.error('Error: User not found.', { autoClose: 2000 });
       return;
     }
-
+  
     // Prepare payload
     const payload = {
       title,
@@ -33,53 +31,43 @@ const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
       assignedUserId: assignedUser ? assignedUser : null,
       userId,  // Assigned user (only for admin)
     };
-
+  
     // Only add deadline if it's an assigned task
     if (assignedUser) {
       if (!deadline) {
-        setAlertMessage('Error: Assigned tasks must have a deadline.');
-        setAlertType('error');
-        setTimeout(() => setAlertMessage(null), 2000);
+        toast.error('Error: Assigned tasks must have a deadline.', { autoClose: 2000 });
         return;
       }
       payload.deadline = deadline.toISOString();  // Convert to ISO format
     }
-
+  
     axios.post('http://localhost:3000/task', payload, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(response => {
         const { task, assignedUserId } = response.data;
-    
+  
         // Only add task to local list if it belongs to the current user
         if (!assignedUserId || assignedUserId === userId) {
           onTaskCreated(task);
         }
-    
-        setAlertMessage('Task Created Successfully!');
-        setAlertType('success');
+  
+        toast.success('Task Created Successfully!', { autoClose: 2000 });
         form.resetFields();
-        setTimeout(() => setAlertMessage(null), 2000);
       })
       .catch((error) => {
         console.error('🚨 Error creating task:', error);
-        setAlertMessage('Error: Could not create the task.');
-        setAlertType('error');
-        setTimeout(() => setAlertMessage(null), 2000);
+        toast.error('Error: Could not create the task.', { autoClose: 2000 });
       });
-    
   };
   
 
   return (
-    <Card title="Add New Task" bordered={true} 
+    <Card title="Add New Task ✏️" bordered={true} 
     style={{ 
       boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
       borderRadius: '8px',
       padding: '16px', marginBottom:'2rem' }}>
-      {alertMessage && (
-        <Alert message={alertMessage} type={alertType} showIcon style={{ marginBottom: '20px' }} />
-      )}
       <Form 
         form={form} 
         onFinish={handleSubmit} 
@@ -122,6 +110,7 @@ const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
           </Col>
         </Row>
       </Form>
+      <ToastContainer /> 
     </Card>
   );
 };

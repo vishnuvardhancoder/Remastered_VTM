@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, message, Tag, Input, Col, DatePicker } from 'antd';
+import { Table, Button, Modal, Form, message, Tag, Input, Col, DatePicker,Card,Row,Typography } from 'antd';
 import axios from 'axios';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './AdminDashboard.css';
+import ParticleBackground from '../components/ParticleBackground';
+
+const { Title } = Typography;
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -117,14 +122,35 @@ const AdminDashboard = () => {
               {
                 recipients: [assignedUserEmail],
                 subject: `New Task Assigned: ${newTaskTitle}`,
-                html: `<p>Hello ${assignedUserName},</p>
-                      <p>A new task has been assigned to you:</p>
-                      <p><strong>Title:</strong> ${newTaskTitle}</p>
-                      <p><strong>Description:</strong> ${newTaskDescription}</p>
-                      <p><strong>Deadline:</strong> ${new Date(newTaskDeadline).toLocaleString()}</p>
-                      <p>Thank you!</p>
-                      <p>Regards</p>
-                      <p>VTaskManager</p>`,
+                html: `<p style="font-family: Arial, sans-serif; color: #333333;">Hello <strong>${assignedUserName}</strong>,</p>
+
+<p style="font-family: Arial, sans-serif; color: #333333;">We are pleased to inform you that a new task has been assigned to you in <strong>VTaskManager</strong>.</p>
+
+<p style="font-family: Arial, sans-serif; color: #333333; font-weight: bold;">Task Details:</p>
+
+<table style="font-family: Arial, sans-serif; color: #333333; border-collapse: collapse; margin-top: 10px;">
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Title:</td>
+    <td style="padding: 8px;">${newTaskTitle}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Description:</td>
+    <td style="padding: 8px;">${newTaskDescription}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Deadline:</td>
+    <td style="padding: 8px;">${new Date(newTaskDeadline).toLocaleString()}</td>
+  </tr>
+</table>
+
+<p style="font-family: Arial, sans-serif; color: #333333; margin-top: 20px;">If you have any questions or need further assistance, please feel free to reach out.</p>
+
+<p style="font-family: Arial, sans-serif; color: #333333; margin-top: 20px;">Thank you for using <strong>VTaskManager</strong>!</p>
+
+<p style="font-family: Arial, sans-serif; color: #333333;">Best regards,</p>
+
+<p style="font-family: Arial, sans-serif; color: #333333; font-weight: bold;">The VTaskManager Team</p>
+`,
               },
               {
                 headers: {
@@ -187,24 +213,26 @@ const AdminDashboard = () => {
   };
 
   // Search functionality for tasks
-  // Search functionality for tasks, including user search by username
-const handleTaskSearch = (value) => {
-  setTaskSearchQuery(value);
-  if (value.trim() === '') {
-    setFilteredTasks(tasks);
-  } else {
-    const filtered = tasks.filter((task) => {
-      // Filter tasks by title, description, or username
-      return (
-        task.title.toLowerCase().includes(value.toLowerCase()) ||
-        task.description.toLowerCase().includes(value.toLowerCase()) ||
-        (task.assignedUser && task.assignedUser.username.toLowerCase().includes(value.toLowerCase()))
-      );
-    });
-    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort tasks by created date
+  const handleTaskSearch = (query) => {
+    setTaskSearchQuery(query);
+  
+    if (!query) {
+      setFilteredTasks(tasks); // Reset to original list if search query is empty
+      return;
+    }
+  
+    const lowerCaseQuery = query.toLowerCase();
+  
+    const filtered = tasks.filter(task => 
+      task.title.toLowerCase().includes(lowerCaseQuery) || 
+      task.description.toLowerCase().includes(lowerCaseQuery) ||
+      (task.username && task.username.toLowerCase().includes(lowerCaseQuery)) // Now correctly filtering by username
+    );
+  
     setFilteredTasks(filtered);
-  }
-};
+  };
+  
+  
 
 
   // User Table Columns
@@ -259,53 +287,82 @@ const handleTaskSearch = (value) => {
   ];
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Admin Dashboard</h2>
+    <div style={{ padding: '30px', backgroundColor: '#2c3e50', minHeight: '100vh',  color: '#ffffff' }}>
+      <ParticleBackground/>
+      <Title level={2} style={{ textAlign: 'center', marginBottom: '20px',  color: '#ffffff'  }}>Admin Dashboard 💻</Title>
       
-      {/* User Search and Table */}
-      <h3>Users</h3>
-      <div style={{ marginBottom: '10px' }}>
-        <Col xs={24} sm={24} md={12}>
-          <Input.Search 
-            placeholder="Search Users" 
-            value={userSearchQuery}
-            onChange={(e) => handleUserSearch(e.target.value)}
-            style={{ width: '300px', marginBottom: '10px' }}
-          />
-        </Col>
-      </div>
-      <Table 
-        dataSource={filteredUsers} 
-        columns={userColumns} 
-        rowKey="userId" 
-      />
-
-      {/* Task Search and Table */}
-      <h3>All Tasks</h3>
-      <div style={{ marginBottom: '10px' }}>
-        <Col xs={24} sm={24} md={12}>
-          <Input.Search 
-            placeholder="Search Tasks" 
-            value={taskSearchQuery}
-            onChange={(e) => handleTaskSearch(e.target.value)}
-            style={{ width: '300px', marginBottom: '10px' }} 
-          />
-        </Col>
-      </div>
-      <Table 
-        dataSource={filteredTasks} 
-        columns={taskColumns} 
-        rowKey="taskId" 
-      />
-
-      {/* Modal for Assigning/Creating Task */}
+      {/* Users Section */}
+      <Card title="Users  👥" bordered={false} style={{ marginBottom: '60px', borderRadius: '10px' }}>
+        <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
+          <Col xs={24} sm={12} md={8}>
+            <Input 
+              placeholder="Search Users"
+              value={userSearchQuery}
+              onChange={(e) => handleUserSearch(e.target.value)}
+              prefix={<SearchOutlined />}
+            />
+          </Col>
+        </Row>
+        <Table 
+          dataSource={filteredUsers} 
+          columns={userColumns} 
+          rowKey="userId" 
+          pagination={{ pageSize: 8 }}
+          scroll={{ x: 'max-content' }} // Allow horizontal scrolling
+          style={{
+            backgroundColor: '#ffffff', // White background for modern look
+            borderRadius: '8px', // Rounded corners for a sleek design
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
+          }}
+          bordered
+          rowClassName="custom-table-row"
+        />
+      </Card>
+      
+      {/* Tasks Section */}
+      <Card title="All Tasks 📋" bordered={false} style={{ marginBottom: '20px', borderRadius: '10px' }}>
+        <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
+          <Col xs={24} sm={12} md={8}>
+            <Input 
+              placeholder="Search Tasks"
+              value={taskSearchQuery }
+              onChange={(e) => handleTaskSearch(e.target.value)}
+              prefix={<SearchOutlined />}
+            />
+          </Col>
+        </Row>
+        <Table 
+          dataSource={filteredTasks} 
+          columns={taskColumns} 
+          rowKey="taskId" 
+          pagination={{ pageSize: 8 }}
+          scroll={{ x: 'max-content' }} // Allow horizontal scrolling
+          style={{
+            backgroundColor: '#ffffff', // White background for modern look
+            borderRadius: '8px', // Rounded corners for a sleek design
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
+          }}
+          bordered
+          rowClassName="custom-table-row"
+        />
+      </Card>
+      
+      {/* Task Assignment Modal */}
       <Modal
         title="Assign New Task"
         open={isModalVisible}
         onOk={handleAssignTask}
         onCancel={() => setIsModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleAssignTask}>
+            Assign Task
+          </Button>
+        ]}
       >
-        <Form>
+        <Form layout="vertical">
           <Form.Item label="User">
             <Input value={selectedUser && users.find(user => user.userId === selectedUser)?.username} disabled />
           </Form.Item>
@@ -333,10 +390,12 @@ const handleTaskSearch = (value) => {
           </Form.Item>
         </Form>
       </Modal>
-      {/* Add the ToastContainer to show the notifications */}
+      
       <ToastContainer />
     </div>
   );
 };
+
+
 
 export default AdminDashboard;

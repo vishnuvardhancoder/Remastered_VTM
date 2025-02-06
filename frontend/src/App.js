@@ -80,8 +80,8 @@ const AppHeader = () => {
   return (
     <Header
       style={{
-        background: "#f1f1f1",
-        color: "black",
+        background: "linear-gradient(to right,#000428, #004e92 )",
+        color: "white",
         padding: "20px",
         display: "flex",
         alignItems: "center",
@@ -127,7 +127,7 @@ const AppHeader = () => {
 
 
 const AppFooter = () => (
-  <Footer style={{ textAlign: 'center', padding: '10px', fontSize: 'clamp(12px, 3vw, 14px)' }}>
+  <Footer style={{ textAlign: 'center', padding: '20px', fontSize: 'clamp(12px, 3vw, 14px)',background: "linear-gradient(to right, #004e92,#000428 )", color:'white' }}>
     Task Manager ©VISHNU VARDHAN | 2025
   </Footer>
 );

@@ -1,89 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
 .register-page {
-    position: relative;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #1a2a4a, #293b5f);
-    color: white;
-    overflow: hidden;
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a2a4a, #293b5f);
+  color: white;
+  overflow: hidden;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.animated-background {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+}
+
+.floating-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float 20s infinite linear;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) scale(1);
+    opacity: 0;
+  }
+}
+
+.register-container {
+  position: relative;
+  width: 90%;
+  max-width: 480px;
+  max-height: 90vh;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.register-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.brand-logo {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #00b4db, #0083b0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.75rem;
+}
+
+.register-header h2 {
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0.25rem 0;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+.register-form {
+  margin: 0 auto;
+}
+
+.register-form .ant-form-item {
+  margin-bottom: 1rem;
+}
+
+.register-form .ant-form-item-label {
+  padding-bottom: 0.25rem;
+}
+
+.register-form .ant-form-item-label > label {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Input Styles */
+.register-form input,
+.register-form .ant-input-password {
+  height: 42px;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  color: white !important;
+  padding: 0 1rem;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.register-form input:hover,
+.register-form .ant-input-password:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.register-form input:focus,
+.register-form .ant-input-password:focus {
+  border-color: #00b4db !important;
+  box-shadow: 0 0 0 2px rgba(0, 180, 219, 0.2) !important;
+}
+
+.register-form input::placeholder,
+.register-form .ant-input-password input::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+  font-size: 0.9rem;
+}
+
+/* Password Input Icon */
+.register-form .ant-input-password-icon {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.register-button {
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(45deg, #00b4db, #0083b0) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-top: 0.75rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.register-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 180, 219, 0.3);
+}
+
+.register-button:active {
+  transform: translateY(0);
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.login-link a {
+  color: #00b4db;
+  font-weight: 500;
+  margin-left: 0.5rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  color: #0083b0;
+  text-decoration: underline;
+}
+
+/* Error message styling */
+.ant-form-item-explain-error {
+  color: #ff4d4f !important;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  opacity: 0.9;
+}
+
+/* Toast Notification Styling */
+.Toastify__toast {
+  border-radius: 12px;
+  background: rgba(25, 35, 55, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .register-container {
+    width: 95%;
+    padding: 1.5rem;
+    max-height: 95vh;
+  }
+
+  .name-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .register-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .brand-logo {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .register-button {
+    height: 42px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Height-based media queries */
+@media (max-height: 700px) {
+  .register-container {
+    padding: 1.25rem;
   }
   
+  .brand-logo {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .register-header {
+    margin-bottom: 1rem;
+  }
+  
+  .register-form .ant-form-item {
+    margin-bottom: 0.75rem;
+  }
+  
+  .register-button {
+    margin-top: 0.5rem;
+  }
+  
+  .login-link {
+    margin-top: 1rem;
+  }
+
+  
   .particle-background {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    z-index: 1;
-    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
   }
   
   .register-container {
     position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 500px;
-    padding: 2rem;
+    z-index: 1;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
     backdrop-filter: blur(10px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    border-radius: 10px;
   }
   
-  .register-title {
-    text-align: center;
-    color: white !important;
-    margin-bottom: 1.5rem;
-  }
-  
-  .register-form .ant-form-item-label > label {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  
-  .name-row {
-    display: flex;
-    gap: 1rem;
-  }
-  
-  .name-input {
-    flex: 1;
-  }
-  
-  .register-form input, 
-  .register-form .ant-input-password {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: white !important;
-  }
-  
-  .register-form input::placeholder, 
-  .register-form .ant-input-password::placeholder {
-    color: rgba(255, 255, 255, 0.5) !important;
-  }
-  
-  .register-button {
-    width: 100%;
-    background: linear-gradient(45deg, #00b4db, #0083b0) !important;
-    border: none !important;
-    height: 45px;
-    transition: all 0.3s ease;
-  }
-  
-  .register-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,180,219,0.4);
-  }
-  
-  .login-link {
-    text-align: center;
-    margin-top: 1rem;
-    color: rgba(255, 255, 255, 0.7);
-  }
-  
-  .login-link a {
-    color: #00b4db;
-    transition: color 0.3s ease;
-  }
-  
-  .login-link a:hover {
-    color: #0083b0;
-  }
+}

@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+.admin-login-page {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a2a4a, #293b5f);
+  color: white;
+  overflow: hidden;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.animated-background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+  
+  .floating-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+  
+  /* Create 50 unique animation delays */
+  .floating-particle:nth-child(1) { animation: float 15s infinite linear; left: 2%; }
+  .floating-particle:nth-child(2) { animation: float 17s infinite linear; left: 8%; animation-delay: -2s; }
+  .floating-particle:nth-child(3) { animation: float 13s infinite linear; left: 14%; animation-delay: -3s; }
+  .floating-particle:nth-child(4) { animation: float 16s infinite linear; left: 20%; animation-delay: -4s; }
+  .floating-particle:nth-child(5) { animation: float 14s infinite linear; left: 26%; animation-delay: -5s; }
+  .floating-particle:nth-child(6) { animation: float 18s infinite linear; left: 32%; animation-delay: -6s; }
+  .floating-particle:nth-child(7) { animation: float 15s infinite linear; left: 38%; animation-delay: -7s; }
+  .floating-particle:nth-child(8) { animation: float 16s infinite linear; left: 44%; animation-delay: -8s; }
+  .floating-particle:nth-child(9) { animation: float 14s infinite linear; left: 50%; animation-delay: -9s; }
+  .floating-particle:nth-child(10) { animation: float 17s infinite linear; left: 56%; animation-delay: -10s; }
+  /* Add more variations for other particles... up to 50 */
+  
+  @keyframes float {
+    0% {
+      transform: translateY(110vh) scale(0);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.5;
+    }
+    80% {
+      opacity: 0.5;
+    }
+    100% {
+      transform: translateY(-10vh) scale(1);
+      opacity: 0;
+    }
+  }
+
+.back-button {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-login-container {
+  position: relative;
+  width: 90%;
+  max-width: 440px;
+  padding: 2.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.brand-logo {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #00b4db, #0083b0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+}
+
+.admin-login-header h2 {
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+.admin-login-form {
+  margin: 0 auto;
+}
+
+.admin-login-form .ant-form-item {
+  margin-bottom: 1.25rem;
+}
+
+.admin-login-form .ant-form-item-label {
+  padding-bottom: 0.25rem;
+}
+
+.admin-login-form .ant-form-item-label > label {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Input Styles */
+.admin-login-form input,
+.admin-login-form .ant-input-password {
+  height: 44px;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  color: white !important;
+  padding: 0 1rem;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.admin-login-form input:hover,
+.admin-login-form .ant-input-password:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.admin-login-form input:focus,
+.admin-login-form .ant-input-password:focus {
+  border-color: #00b4db !important;
+  box-shadow: 0 0 0 2px rgba(0, 180, 219, 0.2) !important;
+}
+
+.admin-login-form input::placeholder,
+.admin-login-form .ant-input-password input::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+  font-size: 0.9rem;
+}
+
+/* Password Input Icon */
+.admin-login-form .ant-input-password-icon {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.login-button {
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(45deg, #00b4db, #0083b0) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 180, 219, 0.3);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+/* Error message styling */
+.ant-form-item-explain-error {
+  color: #ff4d4f !important;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  opacity: 0.9;
+}
+
+/* Toast Notification Styling */
+.Toastify__toast {
+  border-radius: 12px;
+  background: rgba(25, 35, 55, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  color: white;
+}
+
+.login-input{
+  height: 42px;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  color: white !important;
+  padding: 0 1rem;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .admin-login-container {
+    width: 95%;
+    padding: 2rem 1.5rem;
+  }
+
+  .back-button {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .admin-login-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .brand-logo {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .login-button {
+    height: 42px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Height-based media queries */
+@media (max-height: 600px) {
+  .admin-login-container {
+    padding: 1.5rem;
+  }
+  
+  .brand-logo {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .admin-login-header {
+    margin-bottom: 1rem;
+  }
+  
+  .admin-login-form .ant-form-item {
+    margin-bottom: 0.75rem;
+  }
+}
+

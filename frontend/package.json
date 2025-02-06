@@ -13,6 +13,8 @@
     "antd": "^5.23.0",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
+    "framer-motion": "^12.3.1",
+    "lucide-react": "^0.474.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-google-login": "^5.2.2",

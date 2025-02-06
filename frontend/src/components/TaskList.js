@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
   import { EllipsisOutlined, CheckOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined } from '@ant-design/icons';
   import axios from 'axios';
   import { useLocation } from 'react-router-dom';
+import ParticleBackground from './ParticleBackground';
 
   const TaskList = ({ tasks, setTasks }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -444,8 +445,9 @@ import React, { useEffect, useState } from 'react';
 
     return (
       <div>
+        <ParticleBackground/>
       <Card 
-      title="Task List" 
+      title="Task List 📋" 
       bordered={true} 
       style={{ 
         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 

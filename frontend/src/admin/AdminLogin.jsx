@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Row, Col } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeftOutlined } from '@ant-design/icons'; // Import the arrow icon
+import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './AdminLogin.css';
+import ParticleBackground from '../components/ParticleBackground';
 
 const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [form] = Form.useForm();
+
+  // Generate random particles with different positions
+  const particles = Array.from({ length: 50 }, (_, index) => ({
+    id: index,
+    left: `${Math.random() * 100}%`,
+    animationDuration: `${15 + Math.random() * 5}s`,
+    animationDelay: `-${Math.random() * 10}s`
+  }));
 
   const handleLogin = async (values) => {
     setLoading(true);
-
     try {
       const response = await axios.post('http://localhost:3000/auth/admin-login', {
         email: values.username,
@@ -28,7 +39,6 @@ const AdminLogin = () => {
       navigate('/admin/dashboard');
     } catch (error) {
       setLoading(false);
-
       if (error.response) {
         toast.error(error.response.data.error || 'Invalid email or password');
       } else if (error.request) {
@@ -39,126 +49,133 @@ const AdminLogin = () => {
     }
   };
 
-  const handleBackClick = () => {
-    navigate('/login'); // Navigate to the login page when the arrow is clicked
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const formVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { x: -20, opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: { duration: 0.4 }
+    }
   };
 
   return (
-    <div style={styles.container}>
-      <ArrowLeftOutlined 
-        style={styles.arrow} 
-        onClick={handleBackClick} 
-      />
-      <Row justify="center" align="middle" style={styles.row}>
-        <Col xs={24} sm={18} md={12} lg={8} xl={6}>
-          <div style={styles.card}>
-            <h2 style={styles.heading}>Admin Login</h2>
-            <Form
-              onFinish={handleLogin}
-              layout="vertical"
-              initialValues={{ username: '', password: '' }}
-            >
-              <Form.Item
-                label="Email"
-                name="username"
-                rules={[{ required: true, message: 'Please enter your email!' }]}
+    <div className="admin-login-page">
+      <div className="animated-background">
+        {particles.map((particle) => (
+          <div
+            key={particle.id}
+            className="floating-particle"
+            style={{
+              left: particle.left,
+              animationDuration: particle.animationDuration,
+              animationDelay: particle.animationDelay
+            }}
+          />
+        ))}
+      </div>
+
+      <motion.div 
+        className="back-button"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate('/login')}
+      >
+        <ArrowLeft size={24} />
+      </motion.div>
+      <ParticleBackground />
+
+      <motion.div 
+        className="admin-login-container"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="admin-login-header">
+          <div className="brand-logo">VTM</div>
+          <h2>Admin Portal</h2>
+          <p className="subtitle">Access your administrative dashboard</p>
+        </div>
+
+        <motion.div variants={formVariants} initial="hidden" animate="visible">
+          <Form 
+            form={form}
+            layout="vertical" 
+            onFinish={handleLogin}
+            className="admin-login-form"
+            autoComplete="off"
+          >
+            <motion.div variants={itemVariants}>
+              <Form.Item 
+                label="Email" 
+                name="username" 
+                rules={[
+                  { required: true, message: 'Please enter your email' },
+                  { type: 'email', message: 'Please enter a valid email' }
+                ]}
               >
-                <Input
-                  size="large"
-                  placeholder="Enter your email"
-                  style={styles.input}
-                  autoComplete="new-password"
+                <Input 
+                  placeholder="admin@example.com"
+                  autoComplete="off"
+                  autoFocus={false}
                 />
               </Form.Item>
+            </motion.div>
 
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[{ required: true, message: 'Please enter your password!' }]}
-              >
-                <Input.Password
-                  size="large"
-                  placeholder="Enter your password"
-                  style={styles.input}
-                  autoComplete="new-password"
-                />
-              </Form.Item>
+            <motion.div className="form-row" variants={itemVariants}>
+                          <Form.Item
+                            label="Password"
+                            name="password"
+                            rules={[{ required: true, message: 'Please enter your password' }]}
+                          >
+                            <Input.Password
+                              className="login-input"
+                              placeholder="Enter your password"
+                              autoComplete="new-password"
+                            />
+                          </Form.Item>
+                        </motion.div>
 
+            <motion.div variants={itemVariants}>
               <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  block
-                  loading={loading}
-                  style={styles.submitButton}
+                <Button 
+                  type="primary" 
+                  htmlType="submit" 
+                  loading={loading} 
+                  className="login-button"
                 >
-                  Log In
+                  Login to Dashboard
                 </Button>
               </Form.Item>
-            </Form>
-          </div>
-        </Col>
-      </Row>
-      <ToastContainer />
+            </motion.div>
+          </Form>
+        </motion.div>
+      </motion.div>
+      <ToastContainer position="top-right" theme="dark" />
     </div>
   );
-};
-
-// Styles for a better UI
-const styles = {
-  container: {
-    position: 'relative',
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #6f42c1, #4e73df)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  arrow: {
-    position: 'absolute',
-    top: '20px',
-    left: '20px',
-    fontSize: '24px',
-    color: '#ffffff',
-    cursor: 'pointer',
-    zIndex: 1,
-  },
-  row: {
-    width: '100%',
-    padding: '0 20px',
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    padding: '40px',
-    borderRadius: '12px',
-    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
-    textAlign: 'center',
-    minWidth: '300px',
-    maxWidth: '500px',
-    border: '2px solid #4e73df',
-  },
-  heading: {
-    fontSize: '28px',
-    fontWeight: 'bold',
-    marginBottom: '20px',
-    color: '#4e73df',
-  },
-  input: {
-    width: '100%',
-    borderRadius: '8px',
-    height: '45px',
-    marginBottom: '15px',
-    fontSize: '16px',
-  },
-  submitButton: {
-    backgroundColor: '#4e73df',
-    borderColor: '#4e73df',
-    fontSize: '16px',
-    height: '45px',
-    borderRadius: '8px',
-    fontWeight: '600',
-    marginTop: '10px',
-  },
 };
 
 export default AdminLogin;

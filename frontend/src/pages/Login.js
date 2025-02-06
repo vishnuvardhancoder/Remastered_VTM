@@ -2,60 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Typography } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import googleLogo from '../assets/images/google.png';
 import 'react-toastify/dist/ReactToastify.css';
+import { ArrowLeft } from 'lucide-react';
 import './Login.css';
 import ParticleBackground from '../components/ParticleBackground';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-// import { Link } from 'react-router-dom';
-
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const { Title } = Typography;
 
-// Reusable GoogleLoginButton Component
-const GoogleLoginButton = ({ loading, setLoading }) => {
-  const handleGoogleLogin = () => {
-    setLoading(true);
-
-    // Redirect to backend Google OAuth endpoint
-    new Promise((resolve, reject) => {
-      window.location.href = 'http://localhost:3000/auth/google';
-      resolve(); // As we're not expecting errors directly from location redirection
-    })
-      .then(() => {
-        // Additional logic can be added if needed after redirection
-      })
-      .catch((error) => {
-        console.error('Google Login Error:', error);
-        toast.error('Google login failed');
-        setLoading(false);
-      });
-  };
-
-  return (
-    <Button
-    type="default"
-    className="button-common google-login-button"
-    loading={loading}
-    onClick={handleGoogleLogin}
-    style={{ display: 'flex', alignItems: 'center' }} // Ensure the image and text are aligned properly
-  >
-    {/* Custom Google Logo */}
-    <img 
-      src={googleLogo}// Provide the relative path to your image
-      alt="Google Logo"
-      style={{ marginRight: '10px', width: '20px', height: '20px' }} // Adjust image size
-    />
-    {loading ? 'Redirecting...' : 'Login with Google'}
-  </Button>
-  );
-};
-
 const Login = () => {
-  const [loading, setLoading] = useState(false); // For login form button
-  const [googleLoading, setGoogleLoading] = useState(false); // For Google login button
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
@@ -67,142 +27,162 @@ const Login = () => {
     setLoading(true);
 
     axios
-  .post('http://localhost:3000/auth/login', values)
-  .then((response) => {
-    const accessToken = response.data.access_token;
-    
+      .post('http://localhost:3000/auth/login', values)
+      .then((response) => {
+        const accessToken = response.data.access_token;
 
-    if (typeof accessToken === 'object' && accessToken.access_token) {
-      localStorage.setItem('access_token', accessToken.access_token); // Extract correctly
-    } else if (typeof accessToken === 'string') {
-      localStorage.setItem('access_token', accessToken); // Store as string
-    } else {
-      throw new Error('Invalid access token format');
-    }
+        if (typeof accessToken === 'object' && accessToken.access_token) {
+          localStorage.setItem('access_token', accessToken.access_token);
+        } else if (typeof accessToken === 'string') {
+          localStorage.setItem('access_token', accessToken);
+        } else {
+          throw new Error('Invalid access token format');
+        }
 
-    localStorage.setItem('user_id', response.data.userId);
-    localStorage.setItem('username', response.data.username);
-    toast.success('Login successful!');
-    navigate('/dashboard');
-  })
-  .catch((error) => {
-    console.error('Login error:', error);
-
-    if (error.response) {
-      if (error.response.status === 401) {
-        toast.error('Invalid username or password');
-      } else if (error.response.status === 400) {
-        toast.error(error.response.data.message); // Show password length error from backend
-      } else {
-        toast.error('Something went wrong. Please try again later');
-      }
-    } else {
-      toast.error('Network error. Please check your connection.');
-    }
-  })
-  .finally(() => {
-    setLoading(false);
-  });
+        localStorage.setItem('user_id', response.data.userId);
+        localStorage.setItem('username', response.data.username);
+        toast.success('Login successful!');
+        navigate('/dashboard');
+      })
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.status === 401) {
+            toast.error('Invalid username or password');
+          } else if (error.response.status === 400) {
+            toast.error(error.response.data.message);
+          } else {
+            toast.error('Something went wrong. Please try again later');
+          }
+        } else {
+          toast.error('Network error. Please check your connection.');
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const token = queryParams.get('access_token'); // Handle access token
-    const userId = queryParams.get('user_id'); // Handle user_id from normal login
-    const googleUserId = queryParams.get('google_user_id'); // Handle google_user_id
+  const handleGoogleLogin = () => {
+    setGoogleLoading(true);
 
-    if (token) {
-      localStorage.setItem('access_token', token); // Save the token
+    new Promise((resolve, reject) => {
+      window.location.href = 'http://localhost:3000/auth/google';
+      resolve();
+    })
+      .catch((error) => {
+        console.error('Google Login Error:', error);
+        toast.error('Google login failed');
+        setGoogleLoading(false);
+      });
+  };
 
-      if (userId) {
-        localStorage.setItem('user_id', userId); // Normal user ID
-      } else if (googleUserId) {
-        localStorage.setItem('google_user_id', googleUserId); // Google user ID
-      }
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+  };
 
-      toast.success('Login successful!');
-      navigate('/dashboard'); // Navigate to the dashboard after successful login
-    } else {
-      if (queryParams.has('access_token') || queryParams.has('user_id') || queryParams.has('google_user_id')) {
-        console.warn('Partial data received from OAuth:', { token, userId, googleUserId });
-        toast.error('Failed to log in. Please try again.');
-      }
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      navigate('/login');
-    }
-  }, [navigate]);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  };
 
   return (
     <div className="login-page">
-      {/* Arrow for navigation to landing page */}
-      <Link to="/landingpage" className="back-arrow">
-        <ArrowLeftOutlined style={{ fontSize: '24px', color: '#fff' }} />
-      </Link>
-  
+      <motion.div
+        className="back-button"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate('/landingpage')}
+      >
+        <ArrowLeft size={24} />
+      </motion.div>
+
       <ParticleBackground />
-      <div className="login-container">
-        <Title level={2} className="login-title">VTM Login</Title>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          autoComplete="off"
-          className="login-form"
-        >
-          <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: 'Please enter your username' }]}
+
+      <motion.div
+        className="login-container"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="login-header">
+          <div className="brand-logo">VTM</div>
+          <h2 style={{marginTop:'-1px'}}>Login to Your Account</h2>
+          <p className="subtitle">Welcome back, let's manage your tasks</p>
+        </div>
+
+        <motion.div variants={containerVariants} initial="hidden" animate="visible">
+          <Form
+            key={Date.now()}
+            form={form}
+            layout="vertical"
+            autoComplete="off"
+            onFinish={onFinish}
+            className="login-form"
           >
-            <Input
-              placeholder="Enter your username"
-              className="login-input"
-              autoComplete="new-password"
-            />
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[
-              { required: true, message: 'Please enter your password' },
-              { min: 6, message: 'Password must be at least 6 characters long' },
-            ]}
-          >
-            <Input.Password
-              placeholder="Enter your password"
-              className="login-input"
-              autoComplete="new-password"
-            />
-          </Form.Item>
-          <Form.Item>
+            <motion.div className="form-row" variants={itemVariants}>
+              <Form.Item
+                label="Username"
+                name="username"
+                rules={[{ required: true, message: 'Please enter your username' }]}
+              >
+                <Input
+                  placeholder="Enter your username"
+                  className="login-input"
+                  autoComplete="off"
+                />
+              </Form.Item>
+            </motion.div>
+
+            <motion.div className="form-row" variants={itemVariants}>
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[{ required: true, message: 'Please enter your password' }]}
+              >
+                <Input.Password
+                  className="login-input"
+                  placeholder="Enter your password"
+                  autoComplete="new-password"
+                />
+              </Form.Item>
+            </motion.div>
+
+            <motion.div className="form-row" variants={itemVariants}>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  className="login-button"
+                >
+                  Login
+                </Button>
+              </Form.Item>
+            </motion.div>
+          </Form>
+
+          <motion.div className="form-row" variants={itemVariants}>
             <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="button-common login-button"
+              type="default"
+              className="google-login-button"
+              loading={googleLoading}
+              onClick={handleGoogleLogin}
             >
-              Login
+              <img src={googleLogo} alt="Google Logo" style={{ marginRight: '10px' }} />
+              Login with Google
             </Button>
-          </Form.Item>
-        </Form>
-  
-        {/* Google Login Button Component */}
-        <GoogleLoginButton loading={googleLoading} setLoading={setGoogleLoading} />
-  
-        <div className="register-link">
-          Don't have an account? <Link to="/register">Register here</Link>
-        </div>
-        <div className="register-link">
-          Are you Admin? <Link to="/admin/login">Click here</Link>
-        </div>
-      </div>
-  
-      {/* ToastContainer Outside the Login Box */}
+          </motion.div>
+
+          <div className="register-link">
+            Don't have an account? <Link to="/register">Register here</Link>
+          </div>
+          <div className="admin-link">
+            Are you an Admin? <Link to="/admin/login">Click here</Link>
+          </div>
+        </motion.div>
+      </motion.div>
+
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -216,7 +196,6 @@ const Login = () => {
       />
     </div>
   );
-  
 };
 
 export default Login;
