@@ -72,7 +72,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {
     // This is where the OAuth process starts. No need to do anything else
-    console.log('Redirecting to Google OAuth');
+    // console.log('Redirecting to Google OAuth');
   }
 
   /**
@@ -106,7 +106,7 @@ export class AuthController {
           } else {
               // Extract username without @gmail.com
               const extractedUsername = googleUser.email.replace(/@gmail\.com$/, '');
-              console.log("Extracted Username:", extractedUsername);
+              // console.log("Extracted Username:", extractedUsername);
   
               // New user registration
               const newUser = await this.authService.register({
@@ -127,11 +127,11 @@ export class AuthController {
           }
   
           // Log profile image to verify if it's correctly passed
-          console.log('Redirecting with Profile Image:', profileImage);
-  
+          // console.log('Redirecting with Profile Image:', profileImage);
+
           // Redirect with necessary parameters, make sure profile image is properly URL encoded
           const redirectUri = `http://localhost:3001/callback?access_token=${accessToken}&user_id=${internalUserId}&google_user_id=${googleUserId}&username=${username}&profile_image=${encodeURIComponent(profileImage)}`;
-          console.log('Redirect URL:', redirectUri);
+          // console.log('Redirect URL:', redirectUri);
 
           
           return res.redirect(redirectUri);

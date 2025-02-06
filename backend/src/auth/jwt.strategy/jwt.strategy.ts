@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   // Extract user details from the JWT payload
   async validate(payload: any) {
-    console.log("🔍 JWT Payload:", payload); // Debugging
+    // console.log("🔍 JWT Payload:", payload); // Debugging
 
     return { 
       userId: payload.userId,  // ✅ Extract userId directly from payload

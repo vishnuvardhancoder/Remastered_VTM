@@ -33,7 +33,7 @@ export class TaskService {
     assignedUserId: string,  
     deadline: Date // Make deadline optional
   ): Promise<Task> {
-    console.log("🚀 Assigned User ID:", assignedUserId);
+    // console.log("🚀 Assigned User ID:", assignedUserId);
     
     const task = new Task();
     task.title = title;
@@ -43,7 +43,7 @@ export class TaskService {
     task.completed = false;      
     task.userId = assignedUserId;  
   
-    console.log("📝 Saving Task with assignedUserId:", task.userId);
+    // console.log("📝 Saving Task with assignedUserId:", task.userId);
     
     return this.taskRepository.save(task);
   }
@@ -55,13 +55,13 @@ export class TaskService {
 
   // ✅ Fetch tasks for a specific user (User-specific)
   async getAllTasks(userId: string): Promise<Task[]> {
-    console.log("Fetching tasks for userId:", userId);
+    // console.log("Fetching tasks for userId:", userId);
 
     const tasks = await this.taskRepository.find({
       where: { userId, deleted: false }
     });
 
-    console.log("Tasks found:", tasks.length);
+    // console.log("Tasks found:", tasks.length);
 
     return tasks;
   }
@@ -140,7 +140,7 @@ export class TaskService {
   // ✅ Assign a task to a user (Admin feature)
 // ✅ Assign a task to a user (Admin feature)
 async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise<Task> {
-  console.log(`📌 Assigning Task ${taskId} to User ${userId}`);
+  // console.log(`📌 Assigning Task ${taskId} to User ${userId}`);
 
   // Check if task exists
   const task = await this.taskRepository.findOne({ where: { taskId } });
@@ -167,7 +167,7 @@ async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise
     task.deadline = deadline;
   }
 
-  console.log(`✅ Task assigned successfully with deadline: ${deadline}`);
+  // console.log(`✅ Task assigned successfully with deadline: ${deadline}`);
 
   // Save the updated task
   const updatedTask = await this.taskRepository.save(task);
@@ -175,14 +175,14 @@ async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise
   // ✅ Send email notification to the assigned user (only if email exists)
   if (user.email) {
     try {
-      console.log(`📧 Sending email to ${user.email}...`);
+      // console.log(`📧 Sending email to ${user.email}...`);
       await this.mailService.sendEmail({
         recipients: [user.email], // Array of recipient emails
         subject: 'Task Assignment Notification',
         html: `<p>Task: ${task.taskId} has been assigned to you.</p>
                <p>Deadline: ${deadline ? deadline.toISOString() : 'No deadline set'}</p>`,
       });
-      console.log(`✅ Email successfully sent to ${user.email}`);
+      // console.log(`✅ Email successfully sent to ${user.email}`);
     } catch (error) {
       console.error('❌ Failed to send email:', error);
     }
@@ -207,7 +207,7 @@ async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise
         deadline: IsNull(),  // Tasks without a deadline (null)
       },
     });
-    console.log('Regular Tasks:', tasks);  // Log the tasks
+    // console.log('Regular Tasks:', tasks);  // Log the tasks
     return tasks;
   }
   
@@ -217,7 +217,7 @@ async assignTaskToUser(userId: string, taskId: string, deadline?: Date): Promise
         deadline: Not(IsNull()),  // Tasks with a deadline (non-null)
       },
     });
-    console.log('Admin Assigned Tasks:', tasks);  // Log the tasks
+    // console.log('Admin Assigned Tasks:', tasks);  // Log the tasks
     return tasks;
   }
   

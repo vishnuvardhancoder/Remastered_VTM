@@ -43,12 +43,12 @@ const AppHeader = () => {
   const isAuthenticated = !!localStorage.getItem("access_token");
   const username = localStorage.getItem("username") || "Guest";
   const profileImage = localStorage.getItem("profile_image"); // Get profile image from localStorage
-  console.log("Profile Image URL:", profileImage);
+  // console.log("Profile Image URL:", profileImage);
   const profileImageWithTimestamp = profileImage ? `${profileImage}?t=${new Date().getTime()}` : undefined;
 
   // Log the first letter of the username to check if it's correct
   const firstLetterOfUsername = username.charAt(0).toUpperCase();
-  console.log("First letter of username:", firstLetterOfUsername); // Debugging
+  // console.log("First letter of username:", firstLetterOfUsername); // Debugging
 
   const handleLogout = () => {
     localStorage.clear();
@@ -152,18 +152,18 @@ const App = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
-    console.log('Full URL Query Params:', queryParams); // Log all query params
+    // console.log('Full URL Query Params:', queryParams); // Log all query params
     const token = queryParams.get('access_token');
     const userId = queryParams.get('userId');
     const profileImage = localStorage.getItem('profileImage');
     if (profileImage) {
-    console.log("✅ Profile Image Retrieved:", profileImage);
+    // console.log("✅ Profile Image Retrieved:", profileImage);
 } else {
-    console.log("❌ No Profile Image Found in LocalStorage");
+    // console.log("❌ No Profile Image Found in LocalStorage");
 }
 
 
-    console.log('Raw Profile Image from URL:', profileImage);  // Debug log
+    // console.log('Raw Profile Image from URL:', profileImage);  // Debug log
 
     if (token && userId) {
         localStorage.setItem('access_token', token);
@@ -173,7 +173,7 @@ const App = () => {
             try {
                 profileImage = decodeURIComponent(profileImage);
                 profileImage = decodeURIComponent(profileImage); // Double decoding
-                console.log('Decoded Profile Image:', profileImage);
+                // console.log('Decoded Profile Image:', profileImage);
                 localStorage.setItem('profile_image', profileImage);
             } catch (error) {
                 console.error('Error decoding profile image:', error);
@@ -195,7 +195,7 @@ const App = () => {
         console.error('No access_token or userId found in the URL');
     }
 
-    console.log('Final Stored Profile Image:', localStorage.getItem('profile_image'));
+    // console.log('Final Stored Profile Image:', localStorage.getItem('profile_image'));
 
 }, [navigate]);
 

@@ -33,9 +33,9 @@ export class EmailService {
     };
     try {
       await transport.sendMail(options);
-      console.log('Email sent successfully');
+      // console.log('Email sent successfully');
     } catch (error) {
-      console.log('Error sending mail: ', error);
+      // console.log('Error sending mail: ', error);
     }
   }
 

@@ -109,7 +109,7 @@ export class AuthService {
         profileImage = 'https://example.com/default-profile-image.png'; // Replace with your default image URL
     }
 
-    console.log('Google Profile:', profile); // Debug log
+    // console.log('Google Profile:', profile); // Debug log
 
     // Validate email and googleUserId
     if (!email || !googleUserId) {
@@ -133,7 +133,7 @@ export class AuthService {
                     profileImage: profileImage, // Store Google profile image or default image
                 });
 
-                console.log('New User Created:', user); // Debug new user creation
+                // console.log('New User Created:', user); // Debug new user creation
             }
 
             return this.login(user);

@@ -59,10 +59,10 @@ async create(createUserDto: CreateUserDto): Promise<User> {
         throw new BadRequestException("Invalid userId: received undefined or null");
     }
 
-    console.log("🔍 Fetching User ID:", userId); // Debug log
+    // console.log("🔍 Fetching User ID:", userId); // Debug log
     const user = await this.userRepository.findOne({ where: { userId } });
 
-    console.log("✅ Found User:", user ? user.userId : "User Not Found");
+    // console.log("✅ Found User:", user ? user.userId : "User Not Found");
     return user;
 }
 

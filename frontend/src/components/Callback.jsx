@@ -33,7 +33,7 @@ const Callback = () => {
         localStorage.setItem("profile_image", profileImage);
       }
 
-      console.log("✅ Profile Image Stored:", profileImage);
+      // console.log("✅ Profile Image Stored:", profileImage);
 
       // Navigate to the dashboard
       message.success("Login successful! Redirecting to dashboard...");
