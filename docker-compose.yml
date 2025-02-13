@@ -4,16 +4,14 @@ services:
   database:
     image: postgres
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: taskdb
+    env_file:
+      - .env
     ports:
-      - "5433:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:  # ✅ Added health check here
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,11 +27,11 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      DB_HOST: database  # Must use service name inside Docker
-      DB_PORT: 5432      # PostgreSQL default port inside Docker
-      DB_USERNAME: postgres
-      DB_PASSWORD: root
-      DB_NAME: taskdb
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
     volumes:
       - ./backend:/app
       - /app/node_modules
