@@ -36,7 +36,7 @@ const AdminDashboard = () => {
   // Fetch all users with their tasks
   const fetchUsersWithTasks = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/auth/admin/users', {
+      const response = await axios.get('https://remastered-vtm-backend-qnvd.onrender.com/auth/admin/users', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       setUsers(response.data);
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
   // Fetch all tasks (already assigned tasks)
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/auth/admin/users', {
+      const response = await axios.get('https://remastered-vtm-backend-qnvd.onrender.com/auth/admin/users', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
   
@@ -88,7 +88,7 @@ const AdminDashboard = () => {
     try {
       // First API Call: Assign the Task
       const taskResponse = await axios.post(
-        'http://localhost:3000/task',
+        'https://remastered-vtm-backend-qnvd.onrender.com/task',
         {
           title: newTaskTitle,
           description: newTaskDescription,
@@ -119,7 +119,7 @@ const AdminDashboard = () => {
         setTimeout(async () => {
           try {
             await axios.post(
-              'http://localhost:3000/email/send',
+              'https://remastered-vtm-backend-qnvd.onrender.com/email/send',
               {
                 recipients: [assignedUserEmail],
                 subject: `New Task Assigned: ${newTaskTitle}`,

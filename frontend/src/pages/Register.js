@@ -96,7 +96,7 @@ const Register = () => {
   const onFinish = (values) => {
     setLoading(true);
     axios
-      .post("http://localhost:3000/auth/register", values)
+      .post("https://remastered-vtm-backend-qnvd.onrender.com/auth/register", values)
       .then((response) => {
         if (response.status === 201) {
           toast.success("Registration successful! Please login.");

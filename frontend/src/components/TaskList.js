@@ -51,7 +51,7 @@ import "./TaskList.css";
       }
 
       axios
-        .get('http://localhost:3000/task', {
+        .get('https://remastered-vtm-backend-qnvd.onrender.com/task', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -87,7 +87,7 @@ import "./TaskList.css";
       }
     
       axios.put(
-        `http://localhost:3000/task/${taskId}`,
+        `https://remastered-vtm-backend-qnvd.onrender.com/task/${taskId}`,
         { status: 'completed' },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -130,7 +130,7 @@ import "./TaskList.css";
       }
     
       axios.put(
-        `http://localhost:3000/task/${taskId}`,
+        `https://remastered-vtm-backend-qnvd.onrender.com/task/${taskId}`,
         { status: 'inProgress' },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -187,7 +187,7 @@ import "./TaskList.css";
           return Promise.reject(new Error(`Task with ID ${taskId} not found`));
         }
         return axios.put(
-          `http://localhost:3000/task/${taskId}`,
+          `https://remastered-vtm-backend-qnvd.onrender.com/task/${taskId}`,
           { ...taskToUpdate, status: 'completed' },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -232,7 +232,7 @@ import "./TaskList.css";
         return;
       }
     
-      axios.patch(`http://localhost:3000/task/${taskId}/delete`, {}, {
+      axios.patch(`https://remastered-vtm-backend-qnvd.onrender.com/task/${taskId}/delete`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
@@ -258,7 +258,7 @@ import "./TaskList.css";
     const token = localStorage.getItem('access_token');
     axios.all(
       selectedRowKeys.map((taskId) =>
-        axios.patch(`http://localhost:3000/task/${taskId}/delete`, {}, { headers: { Authorization: `Bearer ${token}` } })
+        axios.patch(`https://remastered-vtm-backend-qnvd.onrender.com/task/${taskId}/delete`, {}, { headers: { Authorization: `Bearer ${token}` } })
       )
     )
     .then(() => {
@@ -321,7 +321,7 @@ import "./TaskList.css";
 
         // Perform the update with the token included in the header
         axios
-          .put(`http://localhost:3000/task/${selectedTask.taskId}`, taskData, {
+          .put(`https://remastered-vtm-backend-qnvd.onrender.com/task/${selectedTask.taskId}`, taskData, {
             headers: {
               Authorization: `Bearer ${token}`, // Include JWT token in request header
             },

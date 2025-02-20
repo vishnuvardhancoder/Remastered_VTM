@@ -44,7 +44,7 @@ const Dashboard = ({ tasks, setTasks, userId }) => {
     }
 
     axios
-      .get('http://localhost:3000/task', {
+      .get('https://remastered-vtm-backend-qnvd.onrender.com/task', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -80,7 +80,7 @@ const Dashboard = ({ tasks, setTasks, userId }) => {
     }
   
     axios.put(
-      `http://localhost:3000/task/${taskId}`,
+      `https://remastered-vtm-backend-qnvd.onrender.com/task/${taskId}`,
       { status: 'completed' },
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -123,7 +123,7 @@ const markInProgress = (taskId) => {
     }
   
     axios.put(
-      `http://localhost:3000/task/${taskId}`,
+      `https://remastered-vtm-backend-qnvd.onrender.com/task/${taskId}`,
       { status: 'inProgress' },
       { headers: { Authorization: `Bearer ${token}` } }
     )

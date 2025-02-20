@@ -27,7 +27,7 @@ const AdminLogin = () => {
   const handleLogin = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/auth/admin-login', {
+      const response = await axios.post('https://remastered-vtm-backend-qnvd.onrender.com/auth/admin-login', {
         email: values.username,
         password: values.password,
       });

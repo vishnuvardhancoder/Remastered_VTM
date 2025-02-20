@@ -27,7 +27,7 @@ const Login = () => {
     setLoading(true);
 
     axios
-      .post('http://localhost:3000/auth/login', values)
+      .post('https://remastered-vtm-backend-qnvd.onrender.com/auth/login', values)
       .then((response) => {
         const accessToken = response.data.access_token;
 
@@ -66,7 +66,7 @@ const Login = () => {
     setGoogleLoading(true);
 
     new Promise((resolve, reject) => {
-      window.location.href = 'http://localhost:3000/auth/google';
+      window.location.href = 'https://remastered-vtm-backend-qnvd.onrender.com/auth/google';
       resolve();
     })
       .catch((error) => {
