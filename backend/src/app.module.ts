@@ -20,13 +20,12 @@ import { join } from 'path';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get('DB_HOST') || 'localhost',
-        port: parseInt(configService.get('DB_PORT'), 10),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
+        url: configService.get('DATABASE_URL'), // Using DATABASE_URL from .env
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: true, // Set to false in production & use migrations
+        ssl: {
+          rejectUnauthorized: false, // Required for Supabase SSL connection
+        },
       }),
       inject: [ConfigService],
     }),
@@ -39,7 +38,7 @@ import { join } from 'path';
       useFactory: async (configService: ConfigService) => ({
         transport: {
           host: configService.get('MAIL_HOST'),
-          port: configService.get('MAIL_PORT'),
+          port: parseInt(configService.get('MAIL_PORT'), 10),
           auth: {
             user: configService.get('MAIL_USER'),
             pass: configService.get('MAIL_PASS'),
