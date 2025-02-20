@@ -10,33 +10,35 @@ import Callback from './components/Callback';
 import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import Dashboard from './pages/Dashboard';
 
 const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
 
-const Dashboard = ({ tasks, setTasks }) => (
-  <Content
-    style={{
-      padding: '20px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      marginTop: '2rem',
-    }}
-  >
-    <div
-      style={{
-        width: '100%',
-        maxWidth: '90%',
-        margin: '0 auto',
-        padding: '0 15px',
-      }}
-    >
-      <TaskForm onTaskCreated={(newTask) => setTasks((prevTasks) => [...prevTasks, newTask])} />
-      <TaskList tasks={tasks} setTasks={setTasks} />
-    </div>
-  </Content>
-);
+// const Dashboard = ({ tasks, setTasks }) => (
+//   <Content
+//     style={{
+//       padding: '20px',
+//       display: 'flex',
+//       flexDirection: 'column',
+//       alignItems: 'center',
+//       marginTop: '2rem',
+//     }}
+//   >
+//     <div
+//       style={{
+//         width: '100%',
+//         maxWidth: '90%',
+//         margin: '0 auto',
+//         padding: '0 15px',
+//       }}
+//     >
+//       <TaskForm onTaskCreated={(newTask) => setTasks((prevTasks) => [...prevTasks, newTask])} />
+//       <TaskList tasks={tasks} setTasks={setTasks} />
+//     </div>
+//   </Content>
+// );
+<Dashboard/>
 
 const AppHeader = () => {
   const navigate = useNavigate();
@@ -127,7 +129,7 @@ const AppHeader = () => {
 
 
 const AppFooter = () => (
-  <Footer style={{ textAlign: 'center', padding: '20px', fontSize: 'clamp(12px, 3vw, 14px)',background: "linear-gradient(to right, #004e92,#000428 )", color:'white' }}>
+  <Footer style={{ textAlign: 'center', padding: '15px', fontSize: 'clamp(12px, 3vw, 14px)',background: "linear-gradient(to right, #004e92,#000428 )", color:'white' }}>
     Task Manager ©VISHNU VARDHAN | 2025
   </Footer>
 );

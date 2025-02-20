@@ -1,0 +1,236 @@
+/* Change pagination color */
+.custom-pagination-table .ant-pagination-item a,
+.custom-pagination-table .ant-pagination-item-active a,
+.custom-pagination-table .ant-pagination-prev .anticon,
+.custom-pagination-table .ant-pagination-next .anticon {
+  color: white !important; /* Make pagination numbers and icons white */
+}
+
+/* Change the background color of the active page */
+.custom-pagination-table .ant-pagination-item-active {
+  background: #1a2a4a !important;
+  border-color: #1a2a4a !important;
+}
+
+/* Hover effect */
+.custom-pagination-table .ant-pagination-item:hover a {
+  color: #ddd !important;
+}
+
+/* Disable button color */
+.custom-pagination-table .ant-pagination-disabled .anticon {
+  color: #888 !important;
+}
+
+.enabled-button1:hover {
+    background-color: #40a9ff !important;  /* Light hover effect for blue button */
+    border-color: #40a9ff !important;      /* Match border color */
+  }
+  
+  .enabled-button:hover {
+    background-color: #ff7875 !important;  /* Light hover effect for red button */
+    border-color: #ff7875 !important;      /* Match border color */
+  }
+  
+  
+  
+  @keyframes borderPulse {
+    0% { border-color: #007bff; }
+    50% { border-color: #0056b3; } /* Slightly darker blue */
+    100% { border-color: #007bff; }
+  }
+  
+/* Dark theme for the entire search bar */
+.custom-search-bar .ant-input-group {
+  background-color: #1a2a4a !important; /* Fully dark background */
+  border-radius: 6px;
+  border: 1px solid #007bff !important;
+  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Dark input field */
+.custom-search-bar .ant-input {
+  background-color: #1a2a4a !important; /* Dark input */
+  color: white !important;
+  border: none !important;
+}
+
+/* White placeholder text */
+.custom-search-bar .ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+  opacity: 1;
+}
+
+/* Remove white border and set dark background */
+.custom-search-bar .ant-input-affix-wrapper {
+  background-color: #1a2a4a !important; 
+  border: 1px solid #007bff !important;
+}
+
+/* Dark search button */
+.custom-search-bar .ant-input-search-button {
+  background-color: #007bff !important; /* Blue button */
+  border-color: #007bff !important;
+  color: white !important;
+}
+
+/* Dark addon wrapper (fixes white area) */
+.custom-search-bar .ant-input-group-addon {
+  background-color: #1a2a4a !important;
+  border: none !important;
+}
+
+/* Fix hover & focus states */
+.custom-search-bar .ant-input:focus,
+.custom-search-bar .ant-input-search-button:focus {
+  background-color: #1a2a4a !important;
+  color: white !important;
+  box-shadow: none !important;
+}
+
+.completed{
+  background: #10B981;
+  color: #10B981;
+  border: 1px solid #10B981;
+}
+.inprogress{
+  background: #F59E0B	;
+  color: #F59E0B;
+  border: 1px solid #F59E0B;
+}
+.notcompleted{
+  background: #F43F5E;
+  color: #F43F5E;
+  border: 1px solid #F43F5E
+}
+
+/* Dark theme for Ant Design Popover */
+.ant-popover-inner {
+  background-color: #223356 !important; /* Dark background */
+  color: white !important; /* White text */
+  border-radius: 8px;
+}
+
+.ant-popover-arrow::before {
+  background: #1e1e1e !important;
+}
+
+/* Dark theme for Menu */
+.ant-menu {
+  background: transparent !important;
+}
+
+.ant-menu-item {
+  color: white !important;
+}
+
+/* 🔥 Fix for Disabled Menu Items */
+.ant-menu-item-disabled,
+.ant-menu-item-disabled * { /* Apply to all child elements */
+  color: #888888	 !important; /* Orange-like color for visibility */
+  opacity: 0.7 !important;  /* Ensure it stays visible */
+  cursor: not-allowed !important;
+  pointer-events: none !important; /* Prevent interaction */
+}
+
+/* Hover effects */
+.ant-menu-item:hover {
+  background: #333 !important;
+}
+/* Dark theme for Ant Design Modal */
+/* Dark theme for Ant Design Modal */
+.custom-dark-modal .ant-modal-content {
+  background-color: #1e293b !important; /* Dark slate */
+  color: #f8fafc !important; /* Bright white */
+  border-radius: 8px;
+}
+
+/* Dark modal header */
+.custom-dark-modal .ant-modal-header {
+  background-color: #1e293b !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+/* Modal title color */
+.custom-dark-modal .ant-modal-title {
+  color: #f8fafc !important; /* Bright white */
+}
+
+/* Dark modal footer buttons */
+.custom-dark-modal .ant-modal-footer {
+  background-color: #1e293b !important;
+  border-top: 1px solid #334155 !important;
+}
+
+/* 🔥 Fix: Dark Input Fields & Labels */
+.custom-dark-modal .ant-form-item-label > label {
+  color: #f8fafc !important; /* Ensure labels are fully visible */
+}
+
+/* Dark input fields */
+.custom-dark-modal .ant-input {
+  background-color: #334155 !important; /* Slightly lighter for contrast */
+  color: #f8fafc !important; /* Bright white text */
+  border: 1px solid #475569 !important;
+}
+
+/* Placeholder text should also be visible */
+.custom-dark-modal .ant-input::placeholder {
+  color: #94a3b8 !important; /* Soft gray */
+}
+
+/* Input focus effect */
+.custom-dark-modal .ant-input:focus {
+  border-color: #60a5fa !important; /* Blue focus */
+  box-shadow: 0 0 4px rgba(96, 165, 250, 0.5);
+}
+
+/* 🔥 Fix: Dark Checkboxes & Labels */
+.custom-dark-modal .ant-checkbox-wrapper {
+  color: #f8fafc !important;
+}
+
+/* Checkbox label color */
+.custom-dark-modal .ant-checkbox + span {
+  color: #f8fafc !important; /* Ensure checkbox labels are white */
+}
+
+/* Close button color */
+.custom-dark-modal .ant-modal-close {
+  color: #f8fafc !important;
+}
+
+
+/* Dark theme for Popover menu */
+.custom-dark-popover .ant-popover-inner {
+  background-color: #1e293b !important; /* Dark background */
+  color: #f8fafc !important; /* Light text */
+  border-radius: 8px;
+}
+
+/* Fix: Prevent Menu Items from changing to a light background when clicked */
+.custom-dark-popover .ant-menu-item:active,
+.custom-dark-popover .ant-menu-item-selected {
+  background-color: #334155 !important; /* Keep it dark */
+  color: #f8fafc !important;
+}
+
+/* Keep hover effect consistent */
+.custom-dark-popover .ant-menu-item:hover {
+  background-color: #475569 !important; /* Slightly lighter for hover */
+  color: #f8fafc !important;
+}
+
+@media (max-width: 768px) {
+  .custom-search-bar {
+    width: 100% !important; /* Make search bar take full width */
+    font-size: 16px !important; /* Slightly larger font for better UX */
+  }
+
+  .enabled-button1,
+  .enabled-button {
+    min-width: 110px !important; /* Reduce button width */
+    height: 30px !important; /* Reduce button height */
+    font-size: 14px !important; /* Adjust font size for better scaling */
+  }
+}

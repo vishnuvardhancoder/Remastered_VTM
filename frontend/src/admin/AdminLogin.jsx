@@ -8,6 +8,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AdminLogin.css';
 import ParticleBackground from '../components/ParticleBackground';
+import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+
 
 const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -144,19 +146,21 @@ const AdminLogin = () => {
               </Form.Item>
             </motion.div>
 
-            <motion.div className="form-row" variants={itemVariants}>
-                          <Form.Item
-                            label="Password"
-                            name="password"
-                            rules={[{ required: true, message: 'Please enter your password' }]}
-                          >
-                            <Input.Password
-                              className="login-input"
-                              placeholder="Enter your password"
-                              autoComplete="new-password"
-                            />
-                          </Form.Item>
-                        </motion.div>
+            <motion.div variants={itemVariants}>
+  <Form.Item
+    label="Password"
+    name="password"
+    rules={[{ required: true, message: 'Please enter your password' }]}
+  >
+    <Input.Password
+      className="login-input1"
+      placeholder="Enter your password"
+      autoComplete="new-password"
+    />
+  </Form.Item>
+</motion.div>
+
+
 
             <motion.div variants={itemVariants}>
               <Form.Item>

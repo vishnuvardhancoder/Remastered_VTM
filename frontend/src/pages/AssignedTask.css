@@ -1,0 +1,12 @@
+.completed{
+    background: #10B981;
+    color: white;
+}
+.inprogress{
+    background: #F59E0B	;
+    color: white;
+}
+.notcompleted{
+    background: #F43F5E;
+    color: white;
+}

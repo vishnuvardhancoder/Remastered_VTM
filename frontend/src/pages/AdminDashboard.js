@@ -28,6 +28,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchUsersWithTasks();
     fetchTasks();
+    <ParticleBackground/>
   }, []);
 
   
@@ -122,34 +123,55 @@ const AdminDashboard = () => {
               {
                 recipients: [assignedUserEmail],
                 subject: `New Task Assigned: ${newTaskTitle}`,
-                html: `<p style="font-family: Arial, sans-serif; color: #333333;">Hello <strong>${assignedUserName}</strong>,</p>
+                html: `<div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; border: 3px solid #007bff; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif; color: #333333;">
 
-<p style="font-family: Arial, sans-serif; color: #333333;">We are pleased to inform you that a new task has been assigned to you in <strong>VTaskManager</strong>.</p>
+  <!-- Header with Blue Background -->
+  <div style="background-color: #007bff; padding: 15px; text-align: center; border-radius: 7px 7px 0 0;">
+    <h2 style="color: #ffffff; margin: 0;">VTaskManager</h2>
+  </div>
 
-<p style="font-family: Arial, sans-serif; color: #333333; font-weight: bold;">Task Details:</p>
+  <!-- Content Section with Padding -->
+  <div style="padding: 20px; background-color: #ffffff; border-radius: 0 0 7px 7px;">
+    
+    <!-- Greeting -->
+    <p style="font-size: 16px;">Hello <strong>${assignedUserName}</strong>,</p>
 
-<table style="font-family: Arial, sans-serif; color: #333333; border-collapse: collapse; margin-top: 10px;">
-  <tr>
-    <td style="padding: 8px; font-weight: bold;">Title:</td>
-    <td style="padding: 8px;">${newTaskTitle}</td>
-  </tr>
-  <tr>
-    <td style="padding: 8px; font-weight: bold;">Description:</td>
-    <td style="padding: 8px;">${newTaskDescription}</td>
-  </tr>
-  <tr>
-    <td style="padding: 8px; font-weight: bold;">Deadline:</td>
-    <td style="padding: 8px;">${new Date(newTaskDeadline).toLocaleString()}</td>
-  </tr>
-</table>
+    <!-- Introduction -->
+    <p style="font-size: 16px;">A new task has been assigned to you in <strong>VTaskManager</strong>. Please review the details below:</p>
 
-<p style="font-family: Arial, sans-serif; color: #333333; margin-top: 20px;">If you have any questions or need further assistance, please feel free to reach out.</p>
+    <!-- Task Details Box with Padding -->
+    <div style="background-color: #f1f1f1; padding: 15px; border-radius: 6px; margin-top: 10px; border: 2px solid #007bff;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 10px; font-weight: bold; width: 30%;">Title:</td>
+          <td style="padding: 10px;">${newTaskTitle}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; font-weight: bold;">Description:</td>
+          <td style="padding: 10px;">${newTaskDescription}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; font-weight: bold;">Deadline:</td>
+          <td style="padding: 10px; color: #dc3545; font-weight: bold;">${new Date(newTaskDeadline).toLocaleString()}</td>
+        </tr>
+      </table>
+    </div>
 
-<p style="font-family: Arial, sans-serif; color: #333333; margin-top: 20px;">Thank you for using <strong>VTaskManager</strong>!</p>
+    <!-- Footer -->
+    <p style="font-size: 16px; margin-top: 20px;">If you have any questions or need assistance, feel free to reach out.</p>
 
-<p style="font-family: Arial, sans-serif; color: #333333;">Best regards,</p>
+    <p style="font-size: 16px;">Thank you for using <strong>VTaskManager</strong>!</p>
 
-<p style="font-family: Arial, sans-serif; color: #333333; font-weight: bold;">The VTaskManager Team</p>
+    <div style="text-align: center; margin-top: 20px;">
+      <p style="font-weight: bold;">Best regards,</p>
+      <p style="font-weight: bold; color: #007bff;">The VTaskManager Team</p>
+    </div>
+  </div>
+
+</div>
+
+
+
 `,
               },
               {
@@ -236,7 +258,8 @@ const AdminDashboard = () => {
 
 
   // User Table Columns
-  const userColumns = [
+   // User Table Columns
+   const userColumns = [
     { title: 'User Name', dataIndex: 'username', key: 'username' },
     { title: 'Email', dataIndex: 'email', key: 'email' },
     {
@@ -248,6 +271,7 @@ const AdminDashboard = () => {
           setSelectedUser(record.userId);  // This will set the selected user's ID
           setIsModalVisible(true);  // Open the modal to assign a task
         }}
+        style={{background:'#00A8A8',color:'white'}}
         >
           Assign Task
         </Button>
@@ -292,7 +316,8 @@ const AdminDashboard = () => {
       <Title level={2} style={{ textAlign: 'center', marginBottom: '20px',  color: '#ffffff'  }}>Admin Dashboard 💻</Title>
       
       {/* Users Section */}
-      <Card title="Users  👥" bordered={false} style={{ marginBottom: '60px', borderRadius: '10px' }}>
+      <Card title={<span style={{ color: 'white' }}>Users  👥</span>}  bordered={false} style={{ marginBottom: '60px', borderRadius: '10px', background:'#004D91' }}>
+      
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
           <Col xs={24} sm={12} md={8}>
             <Input 
@@ -300,6 +325,8 @@ const AdminDashboard = () => {
               value={userSearchQuery}
               onChange={(e) => handleUserSearch(e.target.value)}
               prefix={<SearchOutlined />}
+              className='custom-search-bar'
+              style={{background:'#1a2a4a',color:'#fff'}}
             />
           </Col>
         </Row>
@@ -310,7 +337,8 @@ const AdminDashboard = () => {
           pagination={{ pageSize: 8 }}
           scroll={{ x: 'max-content' }} // Allow horizontal scrolling
           style={{
-            backgroundColor: '#ffffff', // White background for modern look
+            backgroundColor: '#002E64',
+            color:'#fff', // White background for modern look
             borderRadius: '8px', // Rounded corners for a sleek design
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
           }}
@@ -320,7 +348,16 @@ const AdminDashboard = () => {
       </Card>
       
       {/* Tasks Section */}
-      <Card title="All Tasks 📋" bordered={false} style={{ marginBottom: '20px', borderRadius: '10px' }}>
+
+      <Card 
+  title={<span style={{ color: 'white' }}>All Tasks 📋</span>} 
+  className='tcard' 
+  bordered={false} 
+  style={{ marginBottom: '20px', borderRadius: '10px', background:'#004D91' }}
+
+>
+<ParticleBackground/>
+
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
           <Col xs={24} sm={12} md={8}>
             <Input 
@@ -328,6 +365,8 @@ const AdminDashboard = () => {
               value={taskSearchQuery }
               onChange={(e) => handleTaskSearch(e.target.value)}
               prefix={<SearchOutlined />}
+              style={{background:'#1a2a4a',color:'#fff'}}
+              className='custom-search-bar'
             />
           </Col>
         </Row>
@@ -338,7 +377,8 @@ const AdminDashboard = () => {
           pagination={{ pageSize: 8 }}
           scroll={{ x: 'max-content' }} // Allow horizontal scrolling
           style={{
-            backgroundColor: '#ffffff', // White background for modern look
+            backgroundColor: '#002E64', // White background for modern look
+            color:'#fff', 
             borderRadius: '8px', // Rounded corners for a sleek design
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
           }}
@@ -349,48 +389,69 @@ const AdminDashboard = () => {
       
       {/* Task Assignment Modal */}
       <Modal
-        title="Assign New Task"
-        open={isModalVisible}
-        onOk={handleAssignTask}
-        onCancel={() => setIsModalVisible(false)}
-        footer={[
-          <Button key="cancel" onClick={() => setIsModalVisible(false)}>
-            Cancel
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleAssignTask}>
-            Assign Task
-          </Button>
-        ]}
-      >
-        <Form layout="vertical">
-          <Form.Item label="User">
-            <Input value={selectedUser && users.find(user => user.userId === selectedUser)?.username} disabled />
-          </Form.Item>
-          <Form.Item label="Task Title">
-            <Input 
-              value={newTaskTitle}
-              onChange={(e) => setNewTaskTitle(e.target.value)}
-              placeholder="Enter task title"
-            />
-          </Form.Item>
-          <Form.Item label="Task Description">
-            <Input.TextArea 
-              value={newTaskDescription}
-              onChange={(e) => setNewTaskDescription(e.target.value)}
-              placeholder="Enter task description"
-            />
-          </Form.Item>
-          <Form.Item label="Deadline">
-            <DatePicker 
-              value={newTaskDeadline}
-              onChange={(date) => setNewTaskDeadline(date)}
-              placeholder="Select deadline"
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
-      
+  title={<span style={{ color: '#ffffff' }}>Assign New Task</span>}
+  open={isModalVisible}
+  onOk={handleAssignTask}
+  onCancel={() => setIsModalVisible(false)}
+  footer={[
+    <Button 
+      key="cancel" 
+      onClick={() => setIsModalVisible(false)} 
+      style={{ background: '#1a2a4a', color: '#ffffff', border: 'none' }}
+    >
+      Cancel
+    </Button>,
+    <Button 
+      key="submit" 
+      type="primary" 
+      onClick={handleAssignTask} 
+      style={{ background: '#004D91', color: '#ffffff', border: 'none' }}
+    >
+      Assign Task
+    </Button>
+  ]}
+  className="custom-dark-modal"
+>
+  <Form layout="vertical">
+    <Form.Item label={<span style={{ color: '#ffffff' }}>User</span>}>
+      <Input 
+        value={selectedUser && users.find(user => user.userId === selectedUser)?.username} 
+        disabled 
+        style={{ background: '#1a2a4a', color: '#ffffff', border: '1px solid #004D91' }}
+      />
+    </Form.Item>
+    <Form.Item label={<span style={{ color: '#ffffff' }}>Task Title</span>}>
+      <Input 
+        value={newTaskTitle}
+        onChange={(e) => setNewTaskTitle(e.target.value)}
+        placeholder="Enter task title"
+        style={{ background: '#1a2a4a', color: '#ffffff', border: '1px solid #004D91' }}
+        className="custom-placeholder"
+      />
+    </Form.Item>
+    <Form.Item label={<span style={{ color: '#ffffff' }}>Task Description</span>}>
+      <Input.TextArea 
+        value={newTaskDescription}
+        onChange={(e) => setNewTaskDescription(e.target.value)}
+        placeholder="Enter task description"
+        style={{ background: '#1a2a4a', color: '#ffffff', border: '1px solid #004D91' }}
+        className="custom-placeholder"
+      />
+    </Form.Item>
+    <Form.Item label={<span style={{ color: '#ffffff' }}>Deadline</span>}>
+      <DatePicker 
+        value={newTaskDeadline}
+        onChange={(date) => setNewTaskDeadline(date)}
+        placeholder="Select deadline"
+        style={{ width: '100%', background: '#1a2a4a', color: '#ffffff', border: '1px solid #004D91' }}
+        className="custom-datepicker"
+        dropdownClassName="custom-datepicker-dropdown"
+      />
+    </Form.Item>
+  </Form>
+</Modal>
+
+
       <ToastContainer />
     </div>
   );

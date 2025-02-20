@@ -1,0 +1,36 @@
+.custom-input::placeholder {
+    color: rgba(255, 255, 255, 0.8); /* White with slight opacity */
+    opacity: 1; /* Ensures full visibility */
+  }
+  
+  /* Dark theme for input fields */
+.custom-dark-input {
+    background-color: #1a2a4a !important; /* Fully dark background */
+    color: white !important;
+    border: 1px solid #007bff !important;
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
+  }
+  
+  /* White placeholder text */
+  .custom-dark-input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+    opacity: 1;
+  }
+  
+  /* Remove white border and set dark background */
+  .custom-dark-input:focus {
+    background-color: #1a2a4a !important;
+    color: white !important;
+    box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5) !important;
+    border: 1px solid #007bff !important;
+  }
+  
+  /* Fix input wrapper background (ensures full dark theme) */
+  .custom-dark-input.ant-input {
+    background-color: #1a2a4a !important;
+    color: white !important;
+    border: none !important;
+  }
+  

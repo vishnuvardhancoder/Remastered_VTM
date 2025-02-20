@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
   import axios from 'axios';
   import { useLocation } from 'react-router-dom';
 import ParticleBackground from './ParticleBackground';
+import "./TaskList.css";
 
-  const TaskList = ({ tasks, setTasks }) => {
+  const TaskList = ({ tasks, setTasks, showAssigned  }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [form] = Form.useForm();
@@ -445,289 +446,369 @@ import ParticleBackground from './ParticleBackground';
 
     return (
       <div>
-        <ParticleBackground/>
-      <Card 
-      title="Task List 📋" 
-      bordered={true} 
-      style={{ 
-        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
-        borderRadius: '8px',
-        padding: '16px'
-      }}
-    >
-      <Row gutter={[16, 16]} justify="space-between" align="middle" style={{ marginBottom: '20px' }}>
-        <Col xs={24} sm={24} md={12}>
-          <Input.Search 
-            placeholder="Search tasks..." 
-            value={searchQuery} 
-            onChange={(e) => handleSearch(e.target.value)} 
-            enterButton 
-            allowClear 
-            style={{ borderRadius: '6px', height: '40px' }}
-          />
-        </Col>
+        <ParticleBackground />
     
-        <Col
-          xs={24}
-          sm={24}
-          md={12}
-          style={{
-            textAlign: 'right',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '10px',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={markMultipleCompleted}
-            disabled={!selectedRowKeys.length}
-            style={{
-              minWidth: '180px',
-              height: '40px',
-              fontWeight: '500',
-              borderRadius: '6px'
-            }}
-          >
-            Mark Selected as Complete
-          </Button>
-    
-          {location.pathname === '/dashboard' && (
-            <Button
-              danger
-              onClick={deleteMultipleTasks}
-              disabled={!selectedRowKeys.length}
-              icon={<DeleteOutlined />}
-              style={{
-                minWidth: '160px',
-                height: '40px',
-                fontWeight: '500',
-                borderRadius: '6px'
-              }}
-            >
-              Delete Selected
-            </Button>
-          )}
-        </Col>
-      </Row>
-    
-      {/* Regular Task Table */}
-      <div style={{ overflowX: 'auto', width: '100%', marginBottom: '30px' }}>
-      <Table 
- dataSource={filteredTasks.filter((task) => !task.deadline)}  // Filter tasks with no deadline
-  columns={[
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-      ellipsis: true,
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      ellipsis: true,
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        if (status === 'completed') return <Tag color="green">Completed</Tag>;
-        if (status === 'inProgress') return <Tag color="blue">In Progress</Tag>;
-        return <Tag color="red">Not Completed</Tag>;
-      }
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Popover
-          content={
-            <Menu>
-              <Menu.Item key="edit" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-                Edit
-              </Menu.Item>
-              <Menu.Item
-                key="complete"
-                icon={<CheckOutlined />}
-                onClick={() => markCompleted(record.taskId)}
-                disabled={record.status === 'completed'}
-              >
-                Mark as Complete
-              </Menu.Item>
-              <Menu.Item
-                key="inProgress"
-                icon={<PlayCircleOutlined />}
-                onClick={() => markInProgress(record.taskId)}
-                disabled={record.status === 'inProgress' || record.status === 'completed'}
-              >
-                Mark as In Progress
-              </Menu.Item>
-              {location.pathname === '/dashboard' && (
-                <Menu.Item
-                  key="delete"
-                  icon={<DeleteOutlined />}
-                  onClick={() => handleDelete(record.taskId)}
-                >
-                  Delete
-                </Menu.Item>
-              )}
-            </Menu>
-          }
-          trigger="click"
-          placement="bottomRight"
-        >
-          <Button type="link" icon={<EllipsisOutlined />} />
-        </Popover>
-      )
-    }
-  ]}
-  rowKey="taskId"
-  rowSelection={rowSelection}
-  pagination={{
-    responsive: true,
-    position: ['bottomCenter'],
-    size: 'small',
-  }}
-  scroll={{ x: 'max-content' }}
-  size="middle"
+        <Card
+  title={<span style={{ color: 'white' }}>Task List 📋</span>}
+  bordered={true}
   style={{
-    border: '1px solid #ddd',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
     borderRadius: '8px',
+    color: 'white',
+    padding: '16px',
+    background: 'linear-gradient(135deg, #1a2a4a, #293b5f)',
+    border: '3px solid #007bff', // Default border color
+    animation: 'borderPulse 2s infinite alternate', // Apply animation
   }}
-/>
+>
+
+
+<Row
+  gutter={[16, 16]}
+  justify="space-between"
+  align="middle"
+  style={{ marginBottom: '20px' }}
+>
+  <Col xs={24} sm={24} md={16}>
+    <Input.Search
+      placeholder="Search tasks..."
+      value={searchQuery}
+      onChange={(e) => handleSearch(e.target.value)}
+      enterButton="Search"
+      allowClear
+      className="custom-search-bar"
+      style={{ width: '100%' }} // Ensures search bar takes full width
+    />
+  </Col>
+
+  <Col
+    xs={24}
+    sm={24}
+    md={8}
+    style={{
+      textAlign: 'right',
+      display: 'flex',
+      flexWrap: 'nowrap', // Ensures buttons stay in one row
+      gap: '8px',
+      justifyContent: 'flex-end',
+    }}
+  >
+    <Button
+      type="primary"
+      onClick={markMultipleCompleted}
+      disabled={!selectedRowKeys.length}
+      style={{
+        minWidth: '120px', // Reduce button width slightly
+        height: '36px', // Make buttons slightly smaller
+        fontWeight: '500',
+        borderRadius: '6px',
+        color: 'white',
+        backgroundColor: selectedRowKeys.length ? '#1890ff' : '#bfbfbf',
+        borderColor: selectedRowKeys.length ? '#1890ff' : '#d9d9d9',
+        transition: 'background-color 0.3s, border-color 0.3s',
+      }}
+      className={selectedRowKeys.length ? 'enabled-button1' : ''}
+    >
+      Mark Completed
+    </Button>
+
+    {location.pathname === '/dashboard' && (
+      <Button
+        danger
+        onClick={deleteMultipleTasks}
+        disabled={!selectedRowKeys.length}
+        icon={<DeleteOutlined />}
+        style={{
+          minWidth: '120px', // Reduce button width slightly
+          height: '36px', // Make buttons slightly smaller
+          fontWeight: '500',
+          borderRadius: '6px',
+          color: 'white',
+          backgroundColor: selectedRowKeys.length ? '#ff4d4f' : '#bfbfbf',
+          borderColor: selectedRowKeys.length ? '#ff4d4f' : '#d9d9d9',
+          transition: 'background-color 0.3s, border-color 0.3s',
+        }}
+        className={selectedRowKeys.length ? 'enabled-button' : ''}
+      >
+        Delete
+      </Button>
+    )}
+  </Col>
+</Row>
+
+
+    
+          {/* Regular Task Table */}
+          <div className="w-full rounded-lg bg-gradient-to-br from-slate-900 to-slate-800 p-4 shadow-xl">
+      <Table
+        dataSource={filteredTasks.filter((task) => !task.deadline)}
+        columns={[
+          {
+            title: <span className="text-gray-100 font-medium">Title</span>,
+            dataIndex: 'title',
+            key: 'title',
+            ellipsis: true,
+            className: 'text-gray-100'
+          },
+          {
+            title: <span className="text-gray-100 font-medium">Description</span>,
+            dataIndex: 'description',
+            key: 'description',
+            ellipsis: true,
+            className: 'text-gray-100'
+          },
+          {
+            title: <span className="text-gray-100 font-medium">Status</span>,
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => {
+              if (status === 'completed')
+                return (
+                  <Tag className="completed">
+                    Completed
+                  </Tag>
+                );
+              if (status === 'inProgress')
+                return (
+                  <Tag className="inprogress">
+                    In Progress
+                  </Tag>
+                );
+              return (
+                <Tag className="notcompleted">
+                  Not Completed
+                </Tag>
+              );
+            }
+          },
+          {
+            title: <span className="text-gray-100 font-medium">Actions</span>,
+            key: 'actions',
+            render: (_, record) => (
+              <Popover
+  content={
+    <div className="custom-dark-popover bg-slate-800 rounded-md shadow-lg">
+      <Menu className="bg-transparent border-0">
+        <Menu.Item
+          key="edit"
+          icon={<EditOutlined className="text-blue-400" />}
+          onClick={() => handleEdit(record)}
+          className="text-gray-100 hover:bg-slate-700"
+        >
+          Edit
+        </Menu.Item>
+        <Menu.Item
+          key="complete"
+          icon={<CheckOutlined className="text-emerald-400" />}
+          onClick={() => markCompleted(record.taskId)}
+          disabled={record.status === 'completed'}
+          className="text-gray-100 hover:bg-slate-700"
+        >
+          Mark as Complete
+        </Menu.Item>
+        <Menu.Item
+          key="inProgress"
+          icon={<PlayCircleOutlined className="text-amber-400" />}
+          onClick={() => markInProgress(record.taskId)}
+          disabled={record.status === 'inProgress' || record.status === 'completed'}
+          className="text-gray-100 hover:bg-slate-700"
+        >
+          Mark as In Progress
+        </Menu.Item>
+        {location.pathname === '/dashboard' && (
+          <Menu.Item
+            key="delete"
+            icon={<DeleteOutlined className="text-rose-400" />}
+            onClick={() => handleDelete(record.taskId)}
+            className="text-gray-100 hover:bg-slate-700"
+          >
+            Delete
+          </Menu.Item>
+        )}
+      </Menu>
+    </div>
+  }
+  trigger="click"
+  placement="bottomRight"
+  className="custom-dark-popover" // Apply the new class
+>
+<Button 
+  type="text" 
+  icon={<EllipsisOutlined style={{ color: 'white' }} />} 
+  className="hover:bg-slate-700"
+ />
+
+
+</Popover>
+
+
+
+            )
+          }
+        ]}
+        rowKey="taskId"
+        rowSelection={{
+          ...rowSelection,
+          columnWidth: 48,
+          selectedRowKeys: rowSelection?.selectedRowKeys,
+          onChange: rowSelection?.onChange,
+        }}
+        pagination={{ 
+          responsive: true, 
+          position: ['bottomCenter'],
+          size: 'small',
+          className: "text-gray-100"
+        }}
+        scroll={{ x: 'max-content' }}
+        size="middle"
+        className="custom-dark-table"
+        style={{
+          border:'1px solid black',
+          borderRadius: '8px'
+        }}
+        onRow={(record) => ({
+          className: 'hover:bg-slate-700 transition-colors duration-200'
+        })}
+      />
+
+      <style jsx global>{`
+        .custom-dark-table {
+          background: transparent !important;
+        }
+        .custom-dark-table .ant-table {
+          background: transparent !important;
+        }
+        .custom-dark-table .ant-table-thead > tr > th {
+          background: rgba(30, 41, 59, 0.8) !important;
+          color: #fff !important;
+          border-bottom: 1px solid rgba(148, 163, 184, 0.1) !important;
+        }
+        .custom-dark-table .ant-table-tbody > tr > td {
+          background: transparent !important;
+          border-bottom: 1px solid rgba(148, 163, 184, 0.1) !important;
+          color: #fff !important;
+        }
+        .custom-dark-table .ant-table-tbody > tr:hover > td {
+          background: rgba(51, 65, 85, 0.5) !important;
+        }
+        .custom-dark-table .ant-pagination-item-active {
+          background: #2563eb !important;
+          border-color: #2563eb !important;
+        }
+        .custom-dark-table .ant-pagination-item a {
+          color: #fff !important;
+        }
+        .custom-dark-table .ant-table-column-sorter {
+          color: #fff !important;
+        }
+        .custom-dark-table .ant-checkbox-wrapper {
+          color: #fff !important;
+        }
+        .custom-dark-table .ant-pagination-prev button,
+        .custom-dark-table .ant-pagination-next button {
+          color: #fff !important;
+        }
+      `}</style>
+    </div>
+    
+    <Modal
+  title={<span className="text-white-100">Edit Task</span>} // Ensures title is visible
+  open={isModalVisible}
+  onCancel={() => setIsModalVisible(false)}
+  onOk={handleUpdate}
+  width="95%"
+  style={{ maxWidth: '500px' }}
+  className="custom-dark-modal"
+>
+  <Form form={form} layout="vertical">
+    <Form.Item label={<span className="text-gray-100">Title</span>} name="title" rules={[{ required: true, message: 'Please input the title!' }]}>
+      <Input className="bg-slate-800 text-gray-100 border-gray-600 focus:border-blue-500" />
+    </Form.Item>
+    <Form.Item label={<span className="text-gray-100">Description</span>} name="description" rules={[{ required: true, message: 'Please input the description!' }]}>
+      <Input className="bg-slate-800 text-gray-100 border-gray-600 focus:border-blue-500" />
+    </Form.Item>
+
+    <Row gutter={16}>
+      <Col xs={24} sm={12}>
+        <Form.Item label={<span className="text-gray-100">Completed</span>} name="completed" valuePropName="checked">
+          <Checkbox className="text-gray-100">Completed</Checkbox>
+        </Form.Item>
+      </Col>
+      <Col xs={24} sm={12}>
+        <Form.Item label={<span className="text-gray-100">In Progress</span>} name="inProgress" valuePropName="checked">
+          <Checkbox className="text-gray-100">In Progress</Checkbox>
+        </Form.Item>
+      </Col>
+    </Row>
+  </Form>
+</Modal>
+
+          <ParticleBackground />
+        </Card>
+        <style jsx>{`
+  /* Ensure the rows have a consistent dark background */
+  .ant-table-tbody > tr.task-row {
+    background: linear-gradient(135deg, #1a2a4a, #293b5f) !important;
+    color: white;
+  }
+
+  /* Use nth-child to alternate row background colors */
+  .ant-table-tbody > tr:nth-child(odd) {
+    background: linear-gradient(135deg, #1a2a4a, #1f2d47) !important;
+  }
+
+  .ant-table-tbody > tr:nth-child(even) {
+    background: linear-gradient(135deg, #1a2a4a, #293b5f) !important;
+  }
+
+  /* Disable hover effect completely (important override) */
+  .ant-table-tbody > tr.task-row:hover,
+  .ant-table-tbody > tr.ant-table-row-selected:hover {
+    background: linear-gradient(135deg, #1a2a4a, #293b5f) !important;
+    cursor: default !important; /* Ensure no pointer cursor on hover */
+  }
+
+  /* Prevent background change on selected row */
+  .ant-table-tbody > tr.ant-table-row-selected {
+    background: linear-gradient(135deg, #1a2a4a, #293b5f) !important;
+  }
+
+  /* Status tags styling */
+  .status-tag {
+    // font-weight: bold;
+  }
+
+  .ant-tag-green {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  .ant-tag-blue {
+    background-color: #2196f3;
+    color: white;
+  }
+
+  .ant-tag-red {
+    background-color: #f44336;
+    color: white;
+  }
+
+  /* Make selected checkboxes more visible */
+  .ant-checkbox-wrapper-checked .ant-checkbox-inner {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+  }
+
+  /* Adjust table header color for better visibility */
+  .ant-table-thead > tr > th {
+    background: linear-gradient(135deg, #1a2a4a, #293b5f);
+    color: white !important;
+  }
+`}</style>
+
+    
 
       </div>
-
-      
-    
-  <Modal 
-          title="Edit Task" 
-          open={isModalVisible} 
-          onCancel={() => setIsModalVisible(false)} 
-          onOk={handleUpdate}
-          width="95%"
-          style={{ maxWidth: '500px' }}
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item label="Title" name="title" rules={[{ required: true, message: 'Please input the title!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Description" name="description" rules={[{ required: true, message: 'Please input the description!' }]}>
-              <Input />
-            </Form.Item>
-
-            <Row gutter={16}>
-              <Col xs={24} sm={12}>
-                <Form.Item
-                  label="Completed"
-                  name="completed"
-                  valuePropName="checked"
-                >
-                  <Checkbox />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12}>
-                <Form.Item
-                  label="In Progress"
-                  name="inProgress"
-                  valuePropName="checked"
-                >
-                  <Checkbox />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-        </Modal>
-  </Card>
-
-  {/* Admin Assigned Task Table */}
-  <Card title="Tasks Assigned by Admin" bordered={true}style={{ 
-        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
-        borderRadius: '8px',
-        padding: '16px',
-        marginTop:'25px'
-      }}>
-  <Table 
-  dataSource={tasks.filter(task => task.deadline !== null)}  // Filter tasks with a deadline
-  columns={[
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-      ellipsis: true,
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      ellipsis: true,
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        if (status === 'completed') return <Tag color="green">Completed</Tag>;
-        if (status === 'inProgress') return <Tag color="blue">In Progress</Tag>;
-        return <Tag color="red">Not Completed</Tag>;
-      }
-    },
-    {
-      title: 'Deadline',
-      dataIndex: 'deadline',
-      key: 'deadline',
-      render: (deadline) => deadline ? new Date(deadline).toLocaleDateString() : 'No Deadline'
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Popover
-          content={
-            <Menu>
-              <Menu.Item key="complete" icon={<CheckOutlined />} onClick={() => markCompleted(record.taskId)}>
-                Mark as Complete
-              </Menu.Item>
-              <Menu.Item
-                key="inProgress"
-                icon={<PlayCircleOutlined />}
-                onClick={() => markInProgress(record.taskId)}
-                disabled={record.status === 'inProgress' || record.status === 'completed'}
-              >
-                Mark as In Progress
-              </Menu.Item>
-            </Menu>
-          }
-          trigger="click"
-          placement="bottomRight"
-        >
-          <Button type="link" icon={<EllipsisOutlined />} />
-        </Popover>
-      )
-    }
-  ]}
-  rowKey="taskId"
-  pagination={{
-    responsive: true,
-    position: ['bottomCenter'],
-    size: 'small',
-  }}
-  scroll={{ x: 'max-content' }}
-  size="middle"
-  style={{
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-  }}
-/>
-  </Card>
-
-
-  </div>
-
     );
-  };
-
+  }    
   export default TaskList;

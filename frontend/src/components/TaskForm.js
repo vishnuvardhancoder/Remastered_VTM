@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Form, Input, Button, Alert, Card, Row, Col } from 'antd';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
-
+import "./TaskForm.css";
+import ParticleBackground from './ParticleBackground';
 
 const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
   const [form] = Form.useForm();
@@ -63,56 +64,82 @@ const TaskForm = ({ onTaskCreated, assignedUser = null }) => {
   
 
   return (
-    <Card title="Add New Task ✏️" bordered={true} 
-    style={{ 
-      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
-      borderRadius: '8px',
-      padding: '16px', marginBottom:'2rem' }}>
-      <Form 
-        form={form} 
-        onFinish={handleSubmit} 
-        layout="vertical" 
-        style={{ width: '100%' }}
+    <>
+    <ParticleBackground/>
+    <Card
+  title={<span style={{ color: 'white' }}>Add a Task ✅</span>}
+  bordered={true}
+  style={{
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px',
+    color: 'white',
+    padding: '16px',
+    background: 'linear-gradient(135deg, #1a2a4a, #293b5f)',
+    border: '3px solid #007bff', // Default border color
+    animation: 'borderPulse 2s infinite alternate', // Apply animation
+  }}
+>
+
+<Form 
+  form={form} 
+  onFinish={handleSubmit} 
+  layout="vertical" 
+  style={{ width: '100%' }}
+>
+  <Row gutter={[16, 16]}>
+    <Col xs={24} sm={24} md={8}>
+      <Form.Item 
+        name="title" 
+        label={<span style={{ color: '#f0f0f0' }}>Title</span>} 
+        rules={[{ required: true, message: 'Please enter a title!' }]}
       >
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={8}>
-            <Form.Item 
-              name="title" 
-              label="Title" 
-              rules={[{ required: true, message: 'Please enter a title!' }]}
-            >
-              <Input placeholder="Title" />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={24} md={10}>
-            <Form.Item 
-              name="description" 
-              label="Description" 
-              rules={[{ required: true, message: 'Please enter a description!' }]}
-            >
-              <Input placeholder="Description" />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={24} md={6} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Button 
-                type="primary" 
-                htmlType="submit" 
-                style={{ 
-                  padding: '0 20px', 
-                  fontSize: '14px',  
-                  height: '38px'     
-                }}
-              >
-                Add Task
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+        <Input 
+          placeholder="Title" 
+          className="custom-dark-input"
+        />
+      </Form.Item>
+    </Col>
+
+    <Col xs={24} sm={24} md={10}>
+      <Form.Item 
+        name="description" 
+        label={<span style={{ color: '#f0f0f0' }}>Description</span>} 
+        rules={[{ required: true, message: 'Please enter a description!' }]}
+      >
+        <Input 
+          placeholder="Description" 
+          className="custom-dark-input"
+        />
+      </Form.Item>
+    </Col>
+
+    <Col xs={24} sm={24} md={6} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+      <Form.Item style={{ marginBottom: 0 }}>
+        <Button 
+          type="primary" 
+          htmlType="submit" 
+          style={{ 
+            backgroundColor: '#007bff', 
+            borderColor: '#007bff', 
+            padding: '0 20px', 
+            fontSize: '14px',  
+            height: '38px',
+            borderRadius: '6px', 
+          }}
+        >
+          Add Task
+        </Button>
+      </Form.Item>
+    </Col>
+  </Row>
+</Form>
+
+
       <ToastContainer /> 
     </Card>
+    </>
   );
-};
+  
+}  
 
 export default TaskForm;

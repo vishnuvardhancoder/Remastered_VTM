@@ -1,183 +1,297 @@
-// import React, { useEffect, useState, useContext } from 'react';
-// import { Button, message, Typography, Row, Col, Card, Spin, Avatar, Tooltip } from 'antd';
-// import { useNavigate } from 'react-router-dom';
-// import { TaskContext } from './TaskContext'; // Context for managing tasks
-// import { LogoutOutlined } from '@ant-design/icons'; // Import Ant Design logout icon
+import { Layout, Menu,Dropdown  } from 'antd';
+import { useState } from 'react';
+import {
+  AppstoreOutlined,
+  CheckSquareOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import TaskList from '../components/TaskList';
+import TaskForm from '../components/TaskForm';
+import AssignedTasks from './AssignedTasks';
+import React, { useEffect} from 'react';
+  import { Table, Button, notification, Modal, Form, Input, Checkbox, Popover, Row, Col, Card, Tag } from 'antd';
+  import { EllipsisOutlined, CheckOutlined, EditOutlined, DeleteOutlined, PlayCircleOutlined,MenuOutlined  } from '@ant-design/icons';
+  import axios from 'axios';
 
-// const { Title, Text } = Typography;
+const { Header, Sider, Content } = Layout;
 
-// const Dashboard = () => {
-//   const navigate = useNavigate();
-//   const { tasks, setTasks } = useContext(TaskContext); // Access tasks and setTasks from context
-//   const [loading, setLoading] = useState(true); // Manage loading state for tasks
-//   const [username, setUsername] = useState('');
+const Dashboard = ({ tasks, setTasks, userId }) => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState('tasks'); // Default to My Tasks
+  const [filteredTasks, setFilteredTasks] = useState(tasks);
+ const [searchQuery, setSearchQuery] = useState('');
+ const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-//   // Check for token and user ID in localStorage, redirect if not authenticated
-//   useEffect(() => {
-//     const accessToken = localStorage.getItem('access_token');
-//     const userId = localStorage.getItem('user_id');
-//     const storedUsername = localStorage.getItem('username');
-//     setUsername(storedUsername || 'Guest'); // Use the stored username or default to 'Guest'
-    
-//     if (!accessToken || !userId) {
-//       // Redirect to login if token or user ID is missing
-//       message.warning('Please log in to access the dashboard.');
-//       navigate('/login');
-//     } else {
-//       // Fetch tasks if authenticated
-//       fetchTasks(accessToken);
-//     }
-//   }, [navigate]);
+ // Auto-collapse sidebar on window resize
 
-//   // Fetch tasks from the backend API
-//   const fetchTasks = (token) => {
-//     fetch('http://localhost:3000/api/tasks', {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     })
-//       .then((response) => {
-//         if (response.ok) {
-//           return response.json();
-//         } else {
-//           throw new Error(`Error ${response.status}: ${response.statusText}`);
-//         }
-//       })
-//       .then((data) => {
-//         setTasks(data.tasks || []);
-//       })
-//       .catch((error) => {
-//         console.error('Error fetching tasks:', error);
-//         message.error(`Failed to load tasks: ${error.message}`);
-//         localStorage.removeItem('access_token');
-//         localStorage.removeItem('user_id');
-//         navigate('/login');
-//       })
-//       .finally(() => {
-//         setLoading(false);
-//       });
-//   };
+  // Detect screen size changes
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
+  const fetchTasks = () => {
+    const token = localStorage.getItem('access_token');
 
-//   // Logout handler
-//   const logout = () => {
-//     localStorage.removeItem('access_token');
-//     localStorage.removeItem('user_id');
-//     setTasks([]);
-//     message.success('Logged out successfully.');
-//     navigate('/login');
-//   };
+    if (!token) {
+      notification.error({
+        message: 'Error',
+        description: 'No authentication token found.',
+        placement: 'topRight',
+      });
+      return;
+    }
 
-//   return (
-//     <div style={{ padding: '40px', backgroundColor: '#f4f6f9', minHeight: '100vh' }}>
-//       <Row justify="space-between" align="middle" style={{ marginBottom: '20px' }}>
-//         {/* Username and Avatar with Logout Button */}
-//         <Col>
-//           <Row align="middle">
-//             <Avatar style={{ backgroundColor: '#87d068', marginRight: '10px' }}>
-//               {username.charAt(0)?.toUpperCase()}
-//             </Avatar>
-//             <span style={{ fontSize: '16px', color: '#333', fontWeight: '500' }}>{username}</span>
-//           </Row>
-//         </Col>
-//         <Col>
-//           <Button
-//             type="primary"
-//             danger
-//             icon={<LogoutOutlined />}
-//             onClick={logout}
-//             style={{
-//               borderRadius: '5px',
-//               padding: '6px 16px',
-//               fontSize: '14px',
-//               fontWeight: '500',
-//             }}
-//           >
-//             Logout
-//           </Button>
-//         </Col>
-//       </Row>
+    axios
+      .get('http://localhost:3000/task', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const fetchedTasks = response.data.filter((task) => !task.deleted);
+        fetchedTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        setTasks(fetchedTasks);
+      })
+      .catch(() => {
+        notification.error({
+          message: 'Error',
+          description: 'Failed to fetch tasks.',
+          placement: 'topRight',
+        });
+      });
+  };
 
-//       <Row justify="center" align="middle" style={{ minHeight: '80vh' }}>
-//         <Col span={24} sm={16} md={12} lg={10} xl={8}>
-//           <Card
-//             bordered={false}
-//             style={{
-//               background: '#fff',
-//               padding: '40px',
-//               borderRadius: '10px',
-//               boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
-//               textAlign: 'center',
-//               marginBottom: '20px', // Added spacing between card sections
-//             }}
-//           >
-//             <Title level={2} style={{ color: '#333', fontWeight: 600 }}>
-//               Welcome to the Dashboard!
-//             </Title>
+  const handleSearch = (value) => {
+    setSearchQuery(value); // Update search query
+  };
 
-//             {/* Profile Section */}
-//             <div className="profile-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-//               <div
-//                 className="profile-avatar"
-//                 style={{
-//                   width: '50px',
-//                   height: '50px',
-//                   borderRadius: '50%',
-//                   backgroundColor: '#007bff',
-//                   color: 'white',
-//                   display: 'flex',
-//                   alignItems: 'center',
-//                   justifyContent: 'center',
-//                   fontSize: '20px',
-//                   marginRight: '10px',
-//                 }}
-//               >
-//                 <span>{username ? username.charAt(0).toUpperCase() : ''}</span>
-//               </div>
-//               <span style={{ fontSize: '18px', fontWeight: '500', color: '#333' }}>{username}</span>
-//             </div>
 
-//             <Text style={{ display: 'block', textAlign: 'center', color: '#888', marginBottom: '20px' }}>
-//               {loading ? (
-//                 <Spin tip="Loading tasks..." />
-//               ) : tasks.length > 0 ? (
-//                 `You have ${tasks.length} task(s). Manage them below.`
-//               ) : (
-//                 'You have no tasks yet. Start adding some!'
-//               )}
-//             </Text>
-//           </Card>
+  const markCompleted = (taskId) => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      notification.error({
+        message: 'Unauthorized',
+        description: 'No token found. Please log in again.',
+        placement: 'topRight',
+      });
+      return;
+    }
+  
+    axios.put(
+      `http://localhost:3000/task/${taskId}`,
+      { status: 'completed' },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then(() => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.taskId === taskId ? { ...task, status: 'completed' } : task
+        )
+      );
+      setFilteredTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.taskId === taskId ? { ...task, status: 'completed' } : task
+        )
+      );
+      notification.success({
+        message: 'Task Completed',
+        description: 'The task has been marked as completed!',
+        placement: 'topRight',
+      });
+    })
+    .catch((error) => {
+      console.error('Error marking task as completed:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Could not mark the task as completed.',
+        placement: 'topRight',
+      });
+    });
+};
 
-//           {/* Tasks Table Section */}
-//           <Card
-//             bordered={false}
-//             style={{
-//               background: '#fff',
-//               padding: '20px',
-//               borderRadius: '10px',
-//               boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
-//             }}
-//           >
-//             <Title level={4} style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>
-//               Your Tasks
-//             </Title>
+const markInProgress = (taskId) => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      notification.error({
+        message: 'Unauthorized',
+        description: 'No token found. Please log in again.',
+        placement: 'topRight',
+      });
+      return;
+    }
+  
+    axios.put(
+      `http://localhost:3000/task/${taskId}`,
+      { status: 'inProgress' },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then(() => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.taskId === taskId ? { ...task, status: 'inProgress' } : task
+        )
+      );
+      setFilteredTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.taskId === taskId ? { ...task, status: 'inProgress' } : task
+        )
+      );
+      notification.success({
+        message: 'Task Updated',
+        description: 'The task status is now in progress!',
+        placement: 'topRight',
+      });
+    })
+    .catch((error) => {
+      console.error('Error marking task as in progress:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Could not mark the task as in progress.',
+        placement: 'topRight',
+      });
+    });
+};
 
-//             {/* Tasks Table Here */}
-//             {loading ? (
-//               <Spin tip="Loading tasks..." />
-//             ) : (
-//               <div>
-//                 {/* Display tasks here */}
-//                 <Text style={{ textAlign: 'center', display: 'block', color: '#666' }}>
-//                   {tasks.length > 0 ? 'Here are your tasks' : 'No tasks to show yet.'}
-//                 </Text>
-//               </div>
-//             )}
-//           </Card>
-//         </Col>
-//       </Row>
-//     </div>
-//   );
-// };
+return (
+  <Layout 
+    style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(135deg, #1a2a4a, #293b5f)' 
+    }}
+  >
+    <>
+      {/* Sidebar (Only visible on larger screens) */}
+      {!isMobile && (
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={setCollapsed}
+          style={{ background: 'linear-gradient(135deg, #1a2a4a, #293b5f)' }}
+        >
+          <div
+            style={{
+              height: 64,
+              color: '#fff',
+              textAlign: 'center',
+              fontSize: '18px',
+              lineHeight: '64px',
+              fontWeight: 'bold',
+              fontFamily: 'Montserrat, sans-serif',
+            }}
+          >
+            {collapsed ? 'VTM' : 'VTM Task Manager'}
+          </div>
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultSelectedKeys={['tasks']}
+            onClick={(e) => setSelectedMenu(e.key)}
+            style={{ fontFamily: 'Montserrat, sans-serif' }}
+          >
+            <Menu.Item key="tasks" icon={<AppstoreOutlined />}>My Tasks</Menu.Item>
+            <Menu.Item key="assigned" icon={<CheckSquareOutlined />}>Assigned Tasks</Menu.Item>
+            <Menu.Item key="create" icon={<PlusOutlined />}>Create Task</Menu.Item>
+          </Menu>
+        </Sider>
+      )}
 
-// export default Dashboard;
-// // 
+      {/* Top Navigation for Mobile */}
+      {isMobile && (
+  <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px", marginTop: "10px" }}>
+    <Dropdown
+      overlay={
+        <Menu
+          theme="dark" // Makes the menu dark
+          onClick={(e) => setSelectedMenu(e.key)}
+          style={{ background: "#1a2a4a", color: "white" }} // Dark background & white text
+        >
+          <Menu.Item key="tasks" icon={<AppstoreOutlined style={{ color: "white" }} />} style={{ background: "#1a2a4a", color: "white" }}>
+            My Tasks
+          </Menu.Item>
+          <Menu.Item key="assigned" icon={<CheckSquareOutlined style={{ color: "white" }} />} style={{ background: "#1a2a4a", color: "white" }}>
+            Assigned Tasks
+          </Menu.Item>
+          <Menu.Item key="create" icon={<PlusOutlined style={{ color: "white" }} />} style={{ background: "#1a2a4a", color: "white" }}>
+            Create Task
+          </Menu.Item>
+        </Menu>
+      }
+      trigger={["click"]}
+    >
+      <button style={{ background: "#293b5f", color: "white", padding: "10px 20px", border: "none", borderRadius: "5px", fontSize: "16px", cursor: "pointer" }}>
+        <MenuOutlined style={{ fontSize: "18px", marginRight: "10px" }} />
+        Menu
+      </button>
+    </Dropdown>
+  </div>
+)}
+
+    </>
+
+    {/* Main Content */}
+    <Layout 
+      style={{
+        background: 'linear-gradient(135deg, #1a2a4a, #293b5f)',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
+      <Header
+        style={{
+          background: 'transparent',
+          padding: '20px',
+          textAlign: 'center',
+          fontSize: window.innerWidth <= 768 ? '18px' : '24px',
+          fontWeight: 'bold',
+          color: '#fff',
+          fontFamily: 'Poppins, sans-serif',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          textShadow: '3px 3px 10px rgba(255, 255, 255, 0.2)',
+        }}
+      >
+        {selectedMenu === 'tasks'
+          ? '📝 My Tasks'
+          : selectedMenu === 'assigned'
+          ? '✅ Assigned Tasks'
+          : '➕ Create a Task'}
+      </Header>
+
+      <Content
+        style={{
+          width: '100%',
+          color: '#fff',
+          fontFamily: 'Poppins, sans-serif',
+          padding: window.innerWidth <= 768 ? '20px' : '40px',
+        }}
+      >
+        {selectedMenu === 'tasks' && (
+          <TaskList
+            tasks={tasks.filter((task) => task.createdBy === userId)}
+            setTasks={setTasks}
+            showAssigned={false}
+          />
+        )}
+        {selectedMenu === 'assigned' && (
+          <AssignedTasks
+            tasks={tasks}
+            markCompleted={markCompleted}
+            markInProgress={markInProgress}
+          />
+        )}
+        {selectedMenu === 'create' && (
+          <TaskForm
+            onTaskCreated={(newTask) => setTasks((prev) => [...prev, newTask])}
+          />
+        )}
+      </Content>
+    </Layout>
+  </Layout>
+);
+};
+
+
+export default Dashboard;

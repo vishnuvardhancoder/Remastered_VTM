@@ -1,34 +1,187 @@
-/* Custom Table Row Style */
 
-.custom-table-row:hover {
-    background-color: #f0f2f5; 
+  .dark-theme-row {
+    background-color: #002E64 !important; /* Dark background */
+    color: #ffffff !important; /* White text */
   }
   
-  /* Alternate row colors for better readability */
-  .ant-table-tbody > tr:nth-child(even) {
-    background-color: #fafafa; /* Light grey for odd rows */
+  .dark-theme-row:hover {
+    background-color: #374151 !important; /* Slightly lighter hover effect */
   }
   
-  .ant-table-tbody > tr:nth-child(odd) {
-    background-color: #ffffff; /* White for even rows */
+  .ant-table {
+    background-color: #002E64 !important; /* Table background */
   }
   
-  /* Custom Table Header Styling */
-.ant-table-thead th {
-    background-color: #1890ff !important; /* Ant Design primary color */
-    color: white !important; /* White text for header */
-    font-weight: bold !important; /* Bold text */
-    text-align: center !important; /* Center-aligned text */
+  .ant-table-thead > tr > th {
+    background-color: #123c6d !important; /* Dark header */
+    color: #ffffff !important;
   }
   
-  
-  /* Custom Footer Button Styling */
-  .ant-btn-primary {
-    background-color: #1890ff; /* Matching primary button color */
-    border-color: #1890ff;
+  .ant-table-tbody > tr > td {
+    background-color: #002E64 !important;
+    color: #ffffff !important;
+    /* border-color: #374151 !important; */
   }
   
-  .ant-btn-primary:hover {
-    background-color: #40a9ff; /* Lighter blue on hover */
-  }
-  
+  /* Dark theme for the entire search bar */
+.custom-search-bar .ant-input-group {
+  background-color: #1a2a4a !important; /* Fully dark background */
+  border-radius: 6px;
+  border: 1px solid #007bff !important;
+  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Dark input field */
+.custom-search-bar .ant-input {
+  background-color: #1a2a4a !important; /* Dark input */
+  color: white !important;
+  border: none !important;
+}
+
+/* White placeholder text */
+.custom-search-bar .ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+  opacity: 1;
+}
+
+/* Remove white border and set dark background */
+.custom-search-bar .ant-input-affix-wrapper {
+  background-color: #1a2a4a !important; 
+  border: 1px solid #007bff !important;
+}
+
+/* Dark search button */
+.custom-search-bar .ant-input-search-button {
+  background-color: #007bff !important; /* Blue button */
+  border-color: #007bff !important;
+  color: white !important;
+}
+
+/* Dark addon wrapper (fixes white area) */
+.custom-search-bar .ant-input-group-addon {
+  background-color: #1a2a4a !important;
+  border: none !important;
+}
+
+/* Fix hover & focus states */
+.custom-search-bar .ant-input:focus,
+.custom-search-bar .ant-input-search-button:focus {
+  background-color: #1a2a4a !important;
+  color: white !important;
+  box-shadow: none !important;
+}
+
+/* Dark Theme Modal */
+/* Dark Theme Modal */
+.custom-dark-modal .ant-modal-content {
+  background: #002E64 !important;
+  color: #ffffff !important;
+  border-radius: 10px;
+}
+
+/* Dark Theme for Input and TextArea */
+.custom-placeholder input,
+.custom-placeholder textarea {
+  background: #1a2a4a !important;
+  color: #ffffff !important;
+  border: 1px solid #004D91 !important;
+}
+
+.custom-placeholder input::placeholder,
+.custom-placeholder textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Dark Mode DatePicker */
+.custom-datepicker .ant-picker {
+  background: #1a2a4a !important;
+  color: #ffffff !important;
+  border: 1px solid #004D91 !important;
+}
+
+.custom-datepicker .ant-picker-input input {
+  color: #ffffff !important;
+}
+
+.custom-datepicker .ant-picker-input input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 🔥 Fully Dark Themed DatePicker Dropdown */
+.custom-datepicker-dropdown .ant-picker-panel-container {
+  background: #1a2a4a !important;
+  border: 1px solid #004D91 !important;
+}
+
+/* Ensuring all DatePicker text is white */
+.custom-datepicker-dropdown .ant-picker-cell,
+.custom-datepicker-dropdown .ant-picker-header-view,
+.custom-datepicker-dropdown .ant-picker-month-btn,
+.custom-datepicker-dropdown .ant-picker-year-btn {
+  color: #ffffff !important;
+}
+
+/* Darkening hover & selected states for better visibility */
+.custom-datepicker-dropdown .ant-picker-cell:hover {
+  background: #004D91 !important;
+  color: #ffffff !important;
+}
+
+.custom-datepicker-dropdown .ant-picker-cell-selected {
+  background: #004D91 !important;
+  color: #ffffff !important;
+}
+
+/* Fix Month and Year Dropdown in DatePicker */
+.custom-datepicker-dropdown .ant-picker-header {
+  background: #1a2a4a !important;
+}
+
+.custom-datepicker-dropdown .ant-picker-header button {
+  color: #ffffff !important;
+}
+
+/* 🔥 Remove Extra Background Row Around Buttons */
+.custom-dark-modal .ant-modal-footer {
+  background: transparent !important;
+  border-top: none !important;
+}
+
+/* Make Buttons Seamless */
+.custom-dark-modal .ant-btn {
+  border: none !important;
+  background: #004D91 !important;
+  color: #ffffff !important;
+}
+
+.custom-dark-modal .ant-btn:hover {
+  opacity: 0.8 !important;
+}
+
+/* Darken the 'Cancel' button to match modal */
+.custom-dark-modal .ant-btn[ant-click-animating] {
+  background: #1a2a4a !important;
+}
+/* 🔥 Fully Dark Themed DatePicker (Including Weekday Names: Mon, Tue, etc.) */
+.custom-datepicker-dropdown .ant-picker-content th {
+  color: #ffffff !important; /* Change weekday names to white */
+}
+
+/* Fix Month and Year Dropdown in DatePicker */
+.custom-datepicker-dropdown .ant-picker-header {
+  background: #1a2a4a !important;
+}
+
+.custom-datepicker-dropdown .ant-picker-header button {
+  color: #ffffff !important;
+}
+
+/* 🔥 Remove Background Row from "Assign New Task" Title */
+.custom-dark-modal .ant-modal-header {
+  background: transparent !important;
+  border-bottom: none !important;
+}
+
+.custom-dark-modal .ant-modal-title {
+  color: #ffffff !important;
+}

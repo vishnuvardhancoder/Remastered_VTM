@@ -274,3 +274,42 @@
   }
 }
 
+.login-input1 {
+  background: none !important;
+  border: 1px solid #ccc !important;
+  box-shadow: none !important;
+  height: 40px !important;
+  padding: 8px 12px !important;
+}
+
+.login-input1 input {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px 12px !important;
+  height: auto !important;
+}
+
+.login-input1 .ant-input {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.login-input1 .ant-input-password {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.login-input1 .ant-input-affix-wrapper {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.login-input1 .ant-input-password-icon {
+  background: none !important;
+  box-shadow: none !important;
+}
