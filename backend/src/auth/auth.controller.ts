@@ -130,14 +130,14 @@ export class AuthController {
           // console.log('Redirecting with Profile Image:', profileImage);
 
           // Redirect with necessary parameters, make sure profile image is properly URL encoded
-          const redirectUri = `http://localhost:3001/callback?access_token=${accessToken}&user_id=${internalUserId}&google_user_id=${googleUserId}&username=${username}&profile_image=${encodeURIComponent(profileImage)}`;
+          const redirectUri = `https://remastered-vtm-frontend.vercel.app/callback?access_token=${accessToken}&user_id=${internalUserId}&google_user_id=${googleUserId}&username=${username}&profile_image=${encodeURIComponent(profileImage)}`;
           // console.log('Redirect URL:', redirectUri);
 
           
           return res.redirect(redirectUri);
       } catch (error) {
           console.error('Error during Google authentication:', error);
-          return res.redirect('http://localhost:3001/login?error=authentication_failed');
+          return res.redirect('https://remastered-vtm-frontend.vercel.app/login?error=authentication_failed');
       }
   }
   
