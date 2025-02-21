@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // Enable CORS for frontend communication
   app.enableCors({
-    origin: 'https://remastered-vtm-frontend.vercel.app/',
+    origin: 'https://remastered-vtm-frontend.vercel.app',
     // methods: ['GET', 'POST'],
     credentials: true,
   });
