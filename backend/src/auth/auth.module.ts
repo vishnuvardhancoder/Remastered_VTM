@@ -8,10 +8,12 @@ import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './jwt.strategy/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { TaskModule } from 'src/task/task.module'; // Import TaskModule instead of TaskService
+import { EmailModule } from 'src/mailer/mailer.module';
 
 @Module({
   imports: [
     UserModule,
+    EmailModule,
     PassportModule.register({ defaultStrategy: 'jwt' }), // Default strategy for Passport is 'jwt'
     JwtModule.registerAsync({
       imports: [ConfigModule], // No need to import TaskService here

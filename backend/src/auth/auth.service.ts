@@ -7,6 +7,7 @@ import { User } from 'src/user/entities/user/user';
 import { AssignTaskDto } from './AssignTask.dto';
 import { TaskService } from 'src/task/task.service';
 import * as dotenv from 'dotenv';
+import { EmailService } from 'src/mailer/email.service';
 dotenv.config();
 
 @Injectable()
@@ -15,6 +16,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private readonly taskService: TaskService, // Inject TaskService
+    private readonly emailService: EmailService, // Inject EmailService
   ) {}
 
   // Validate user credentials (username/password)
@@ -71,6 +73,7 @@ export class AuthService {
   }
 
   // Register a new user (hash the password before storing)
+  // ✅ Normal Signup - Now Sends Welcome Email
   async register(registerDto: RegisterDto) {
     const { password, ...rest } = registerDto;
     
@@ -82,45 +85,39 @@ export class AuthService {
     const newUser = await this.userService.create({
       ...rest,  
       password: hashedPassword,
-      profileImage: rest.profileImage || '', // Ensure profileImage is handled
+      profileImage: rest.profileImage || '',
     });
+
+    // ✅ Send Welcome Email
+    await this.emailService.sendWelcomeEmail(newUser.email, newUser.firstname);
 
     // Return user data without password
     const { password: _, ...result } = newUser;
     return result;
   }
 
-  // Check if a user already exists by email (for Google SSO)
   async checkIfUserExists(email: string): Promise<boolean> {
     const user = await this.userService.findByEmail(email);
     return user !== undefined;
   }
 
-  // Handle Google login (check if the user exists, if not, create a new one)
+  // ✅ Google Login - Now Sends Welcome Email
   async googleLogin(profile: any) {
     const email = profile?.email;
     const googleUserId = profile?.googleId;
-    
-    // Ensure profileImage is set. If missing, set a default profile image.
     let profileImage = profile?.profileImage || '';
-    
-    // You can add a fallback default image if no image is provided
+
     if (!profileImage) {
-        profileImage = 'https://example.com/default-profile-image.png'; // Replace with your default image URL
+        profileImage = 'https://example.com/default-profile-image.png'; // Default image URL
     }
 
-    // console.log('Google Profile:', profile); // Debug log
-
-    // Validate email and googleUserId
     if (!email || !googleUserId) {
         throw new UnauthorizedException('Google profile does not contain email or user ID');
     }
 
-    // Check if the user exists by email
     return this.userService.findByEmail(email)
         .then(async (user) => {
             if (!user) {
-                // If no user exists, create a new one
                 const extractedUsername = email.replace(/@gmail\.com$/, ''); 
 
                 user = await this.userService.create({
@@ -130,10 +127,11 @@ export class AuthService {
                     email: email,
                     password: null,  
                     googleUserId: googleUserId,
-                    profileImage: profileImage, // Store Google profile image or default image
+                    profileImage: profileImage,
                 });
 
-                // console.log('New User Created:', user); // Debug new user creation
+                // ✅ Send Welcome Email for Google Users
+                await this.emailService.sendWelcomeEmail(user.email, user.firstname);
             }
 
             return this.login(user);
@@ -142,7 +140,7 @@ export class AuthService {
             console.error('Google login error:', error);
             throw new UnauthorizedException('Google login failed');
         });
-}
+  }
 
 
   // Validate admin credentials
