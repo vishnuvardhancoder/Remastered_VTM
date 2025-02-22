@@ -130,8 +130,7 @@ export class AuthController {
           // console.log('Redirecting with Profile Image:', profileImage);
 
           // Redirect with necessary parameters, make sure profile image is properly URL encoded
-          const redirectUri = `
-https://vtaskmanager.vercel.app/callback?access_token=${accessToken}&user_id=${internalUserId}&google_user_id=${googleUserId}&username=${username}&profile_image=${encodeURIComponent(profileImage)}`;
+          const redirectUri = `https://vtaskmanager.vercel.app/callback?access_token=${accessToken}&user_id=${internalUserId}&google_user_id=${googleUserId}&username=${username}&profile_image=${encodeURIComponent(profileImage)}`;
           // console.log('Redirect URL:', redirectUri);
 
           

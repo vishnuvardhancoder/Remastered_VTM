@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // Enable CORS for frontend communication
   app.enableCors({
-    origin: 'https://vtaskmanager.vercel.app',
+    origin: ['http://localhost:3001', 'https://vtaskmanager.vercel.app'], 
     // methods: ['GET', 'POST'],
     credentials: true,
   });
