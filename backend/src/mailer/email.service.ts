@@ -68,12 +68,12 @@ export class EmailService {
           <p style="font-size: 16px;">You can now start adding and managing your tasks effortlessly with <strong>VTaskManager</strong>.</p>
   
           <!-- Call to Action -->
-          <div style="text-align: center; margin-top: 20px;">
-            <a href="https://your-app-url.com/dashboard" 
-               style="background-color: #007bff; color: white; padding: 12px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
-               Start Managing Your Tasks
-            </a>
-          </div>
+          // <div style="text-align: center; margin-top: 20px;">
+          //   <a href="https://your-app-url.com/dashboard" 
+          //      style="background-color: #007bff; color: white; padding: 12px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+          //      Start Managing Your Tasks
+          //   </a>
+          // </div>
   
           <!-- Footer -->
           <p style="font-size: 16px; margin-top: 20px;">If you have any questions, feel free to reach out.</p>
