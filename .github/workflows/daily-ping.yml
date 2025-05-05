@@ -1,0 +1,14 @@
+name: Render Keep Alive Ping
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Runs every 30 minutes UTC (also every 30 mins IST)
+  workflow_dispatch:        # Allows manual trigger
+
+jobs:
+  curl-website:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Render Backend
+        run: curl -I https://remastered-vtm-backend-qnvd.onrender.com
